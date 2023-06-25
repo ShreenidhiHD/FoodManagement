@@ -31,6 +31,12 @@ async function loginUser(email, password) {
     const data = await response.json();
     const token = data.token;
     localStorage.setItem('authToken', token);
+    if (response.status === 201) {
+      console.log(`User logged in`);
+       // Redirect to userhome.js
+       window.location.href = 'UserHome';
+    }
+    
   } catch (error) {
     console.error('Error during login:', error);
   }
