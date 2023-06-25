@@ -19,7 +19,7 @@ use App\Http\Controllers\SettingsController;
 
 
 Route::post('/signup', [UserController::class, 'signup']);
-
+Route::post('/login', [UserController::class, 'login']);
 Route::get('/user', [UserController::class, 'getUser']);
 
 // Route to fetch application settings
