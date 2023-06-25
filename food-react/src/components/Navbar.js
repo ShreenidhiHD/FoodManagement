@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,17 +7,21 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import { Link as RouterLink } from 'react-router-dom';
 import { SettingsContext } from '../server/SettingsProvider';
+import Logout from './Logout';
 
 const pages = [
   { name: 'Home', path: '/' },
   { name: 'About', path: '/about' },
-  { name: 'Contact', path: '/contact' }
+  { name: 'Contact', path: '/contact' },
 ];
 
-function ResponsiveAppBar() {
+const ResponsiveAppBar = () => {
   const settings = useContext(SettingsContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('authToken') !== null);
 
-  const isAuthenticated = localStorage.getItem('authToken') !== null;
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
 
   return (
     <AppBar position="sticky" sx={{ backgroundColor: '#f8f8f8', color: '#333' }}>
@@ -51,17 +55,12 @@ function ResponsiveAppBar() {
               </Button>
             ))}
           </Box>
-          {isAuthenticated ? (
+          {isLoggedIn ? (
             <>
               <Button component={RouterLink} to="/profile" color="inherit">
                 Profile
               </Button>
-              <Button onClick={() => {
-                localStorage.removeItem('authToken');
-                // Add a redirect to the home page here after logging out
-              }} color="inherit">
-                Logout
-              </Button>
+              <Logout onLogout={handleLogout} />
             </>
           ) : (
             <>
@@ -77,6 +76,6 @@ function ResponsiveAppBar() {
       </Container>
     </AppBar>
   );
-}
+};
 
 export default ResponsiveAppBar;

@@ -84,6 +84,17 @@ class UserController extends Controller
                 return response()->json(['message' => 'Login failed. Please try again.'], 500);
             }
         }
+        public function logout(Request $request)
+        {
+            if ($request->user()) {
+                $request->user()->tokens()->delete();
+                return response()->json(['message' => 'Logged out successfully'], 200);
+            } else {
+                return response()->json(['message' => 'User not authenticated'], 401);
+            }
+        }
+
+
 
 }
 
