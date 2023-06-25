@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AuthenticatedRoute from './utils/AuthenticatedRoute';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Categories from './pages/Categories';
@@ -23,16 +24,11 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/userhome" element={<UserHome />} />
+            <Route path="/userhome" element={<AuthenticatedRoute><UserHome /></AuthenticatedRoute>} />
           </Routes>
-          
         </div>
-
-       
       </Router>
-      
     </SettingsProvider>
-    
   );
 }
 
