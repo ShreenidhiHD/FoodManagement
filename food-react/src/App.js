@@ -11,6 +11,8 @@ import UserHome from './pages/User/UserHome';
 import SettingsProvider from './server/SettingsProvider';
 
 
+// The App component wraps the entire application and sets up routing for all pages.
+// It also provides settings to all components using the SettingsProvider.
 function App() {
   return (
     <SettingsProvider>
@@ -33,3 +35,8 @@ function App() {
 }
 
 export default App;
+
+// The App component wraps the entire application and sets up routing for all pages.
+// It also provides settings to all components using the SettingsProvider.
+// Navbar is always rendered at the top, while other components are rendered based on the current route.
+// The AuthenticatedRoute is used for routes that should only be accessible to authenticated users.

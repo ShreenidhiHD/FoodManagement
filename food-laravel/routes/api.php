@@ -17,13 +17,14 @@ use App\Http\Controllers\SettingsController;
 |
 */
 
-
+// Route for user registration
 Route::post('/signup', [UserController::class, 'signup']);
+
+// Route for user login
 Route::post('/login', [UserController::class, 'login']);
-Route::get('/user', [UserController::class, 'getUser']);
 
+// Route for user logout, accessible only for authenticated users
 Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
-
 
 // Route to fetch application settings
 Route::get('/settings', [SettingsController::class, 'getSettings']);

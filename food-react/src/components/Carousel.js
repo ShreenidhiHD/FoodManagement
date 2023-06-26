@@ -1,8 +1,5 @@
 import React from 'react';
 import { Carousel } from 'react-bootstrap';
-import image1 from '../images/image1.jpg';
-import image2 from '../images/image2.jpg';
-import image3 from '../images/image3.jpg';
 import '../css/Carousel.css';
 
 function CarouselComponent() {
@@ -24,3 +21,8 @@ function CarouselComponent() {
 }
 
 export default CarouselComponent;
+
+
+// The CarouselComponent creates a Carousel using the 'react-bootstrap' Carousel component.
+// It displays a list of images, defined in the 'images' array.
+// Each slide in the Carousel changes every 3 seconds.

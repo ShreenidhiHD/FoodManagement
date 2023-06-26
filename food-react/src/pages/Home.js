@@ -8,6 +8,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Home.css';
 import BrowseMore from '../components/BrowseMore';
 
+// The Home component is the main landing page of the application. 
+// It displays a Carousel at the top, followed by three Card components in a grid.
+// The settings are fetched from SettingsContext to be used in the component.
+// At the end of the page, the BrowseMore and Footer components are displayed.
 const Home = () => {
   const settings = useContext(SettingsContext);
 
