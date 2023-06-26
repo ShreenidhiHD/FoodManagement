@@ -1,44 +1,32 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import { Link as RouterLink } from 'react-router-dom';
 import { SettingsContext } from '../server/SettingsProvider';
+import Logout from './Logout';
 
 const pages = [
   { name: 'Home', path: '/' },
   { name: 'About', path: '/about' },
-  { name: 'Contact', path: '/contact' }
+  { name: 'Contact', path: '/contact' },
 ];
 
-function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+const ResponsiveAppBar = () => {
   const settings = useContext(SettingsContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('authToken') !== null);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
+  const handleLogout = () => {
+    setIsLoggedIn(false);
   };
 
   return (
     <AppBar position="sticky" sx={{ backgroundColor: '#f8f8f8', color: '#333' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-         
           <Typography
             variant="h6"
             noWrap
@@ -67,16 +55,27 @@ function ResponsiveAppBar() {
               </Button>
             ))}
           </Box>
-          <Button component={RouterLink} to="/login" color="inherit">
-            Login
-          </Button>
-          <Button component={RouterLink} to="/signup" color="inherit">
-            Signup
-          </Button>
+          {isLoggedIn ? (
+            <>
+              <Button component={RouterLink} to="/profile" color="inherit">
+                Profile
+              </Button>
+              <Logout onLogout={handleLogout} />
+            </>
+          ) : (
+            <>
+              <Button component={RouterLink} to="/login" color="inherit">
+                Login
+              </Button>
+              <Button component={RouterLink} to="/signup" color="inherit">
+                Signup
+              </Button>
+            </>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
   );
-}
+};
 
 export default ResponsiveAppBar;

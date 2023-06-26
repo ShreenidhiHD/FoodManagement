@@ -17,11 +17,13 @@ use App\Http\Controllers\SettingsController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
+Route::post('/signup', [UserController::class, 'signup']);
+Route::post('/login', [UserController::class, 'login']);
 Route::get('/user', [UserController::class, 'getUser']);
+
+Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+
 
 // Route to fetch application settings
 Route::get('/settings', [SettingsController::class, 'getSettings']);

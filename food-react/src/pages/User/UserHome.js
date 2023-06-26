@@ -1,12 +1,11 @@
 import React, { useContext } from 'react';
 import { Container, Grid } from '@mui/material';
-import Card from '../components/Card';
-import Carousel from '../components/Carousel';
-import Footer from '../components/Footer';
-import { SettingsContext } from '../server/SettingsProvider';
+import Card from '../../components/Card';
+import Carousel from '../../components/Carousel';
+import Footer from '../../components/Footer';
+import { SettingsContext } from '../../server/SettingsProvider';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../css/Home.css';
-import BrowseMore from '../components/BrowseMore';
+import '../../css/Home.css';
 
 const Home = () => {
   const settings = useContext(SettingsContext);
@@ -34,7 +33,6 @@ const Home = () => {
             </Grid>
           </Grid>
         </>
-        <BrowseMore/>
       </Container>
       <Footer />
     </div>

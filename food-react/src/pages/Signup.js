@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,13 +14,43 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 function Signup() {
-  const handleSubmit = (event) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+    const userData = {
+      name,
+      email,
+      password,
+    };
+
+    try {
+      const response = await fetch('http://localhost:8000/api/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.ok) {
+        // Signup successful
+        const data = await response.json();
+        console.log('Signup successful!', data);
+        // Handle success, e.g., display a success message
+      } else {
+        // Signup failed
+        const errorData = await response.json();
+        console.log('Signup failed', errorData);
+        // Handle failure, e.g., display an error message
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle error, e.g., display an error message
+    }
   };
 
   const defaultTheme = createTheme();
@@ -69,6 +99,8 @@ function Signup() {
                 name="name"
                 autoComplete="name"
                 autoFocus
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
               <TextField
                 margin="normal"
@@ -78,6 +110,8 @@ function Signup() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <TextField
                 margin="normal"
@@ -88,27 +122,14 @@ function Signup() {
                 type="password"
                 id="password"
                 autoComplete="new-password"
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirm Password"
-                type="password"
-                id="confirmPassword"
-                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <FormControlLabel
                 control={<Checkbox value="agree" color="primary" />}
                 label="I agree to the terms and conditions"
               />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
+              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                 Sign Up
               </Button>
               <Grid container justifyContent="flex-end">
