@@ -12,89 +12,106 @@ use PDOException;
 
 class UserController extends Controller
 {
-    //Signup function
+    // Signup function handles user registration
     public function signup(Request $request)
-        {
-            try {
-                $validatedData = $request->validate([
-                    'name' => 'required',
-                    'email' => 'required|email|unique:users',
-                    'password' => 'required|min:8',
-                ]);
+    {
+        try {
+            // Validate the request data
+            $validatedData = $request->validate([
+                'name' => 'required',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|min:8',
+            ]);
 
-                // Logging statements
-                Log::info('Validated Data:', $validatedData);
+            // Log the validated data
+            Log::info('Validated Data:', $validatedData);
 
-                $validatedData['password'] = Hash::make($request->password);
+            // Hash the password before storing it
+            $validatedData['password'] = Hash::make($request->password);
 
-                $user = User::create($validatedData);
+            // Create the user with validated data
+            $user = User::create($validatedData);
 
-                // Create a token for the user
-                $token = $user->createToken('authToken')->plainTextToken;
+            // Create a token for the user
+            $token = $user->createToken('authToken')->plainTextToken;
 
-                // Logging statements
-                Log::info('User created:', [$user->toArray()]);
+            // Log the created user
+            Log::info('User created:', [$user->toArray()]);
 
-                return response()->json(['token' => $token], 201);
-            } catch (ValidationException $e) {
-                // Logging statement
-                Log::error('Validation error:', $e->errors());
+            // Return the token to the client
+            return response()->json(['token' => $token], 201);
+        } catch (ValidationException $e) {
+            // Log the validation error
+            Log::error('Validation error:', $e->errors());
 
-                return response()->json(['message' => $e->errors()], 422);
-            } catch (\Exception $e) {
-                // Logging statement
-                Log::error('Exception:', $e->getMessage());
+            return response()->json(['message' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            // Log the exception
+            Log::error('Exception:', $e->getMessage());
 
-                return response()->json(['message' => 'Signup failed. Please try again.'], 500);
-            }
+            return response()->json(['message' => 'Signup failed. Please try again.'], 500);
         }
+    }
 
-        //Logging statement
-        public function login(Request $request)  
-        {  
-            try {  
-                $request->validate([  
-                    'email' => 'required|email',  
-                    'password' => 'required',  
-                ]);  
+    // Login function handles user authentication
+    public function login(Request $request)  
+    {  
+        try {  
+            // Validate the request data
+            $request->validate([  
+                'email' => 'required|email',  
+                'password' => 'required',  
+            ]);  
 
-                $user = User::where('email', $request->email)->first();  
+            // Check if the user exists and the password is correct
+            $user = User::where('email', $request->email)->first();  
 
-                if (!$user || !Hash::check($request->password, $user->password)) {  
-                    return response()->json(['message' => 'The provided credentials are incorrect.'], 401);  
-                }  
-
-                $token = $user->createToken('authToken')->plainTextToken;  
-
-                return response()->json(['token' => $token], 201);  
-            }   
-            catch (QueryException $e) {  
-                return response()->json(['message' => $e->getMessage()], 400);  
+            if (!$user || !Hash::check($request->password, $user->password)) {  
+                return response()->json(['message' => 'The provided credentials are incorrect.'], 401);  
             }  
-            catch (PDOException $e) {  
-                Log::error('Database connection error:', $e->getMessage()); //database connection error  
-                return response()->json(['message' => 'Database connection failed. Please try again later.'], 503);  
-            } 
-            catch (ValidationException $e) {  
-                Log::error('Validation error:', $e->errors()); //validation error  
-                return response()->json(['message' => $e->errors()], 422);  
-            } 
-            catch (\Exception $e) {  
-                Log::error('Exception:', $e->getMessage()); //exception   
-                return response()->json(['message' => 'Login failed. Please try again.'], 500);
-            }
+
+            // Create a token for the user
+            $token = $user->createToken('authToken')->plainTextToken;  
+
+            // Return the token to the client
+            return response()->json(['token' => $token], 201);  
+        }   
+        catch (QueryException $e) {  
+            return response()->json(['message' => $e->getMessage()], 400);  
+        }  
+        catch (PDOException $e) {  
+            // Log the database connection error
+            Log::error('Database connection error:', $e->getMessage());
+
+            return response()->json(['message' => 'Database connection failed. Please try again later.'], 503);  
+        } 
+        catch (ValidationException $e) {  
+            // Log the validation error
+            Log::error('Validation error:', $e->errors());
+
+            return response()->json(['message' => $e->errors()], 422);  
+        } 
+        catch (\Exception $e) {  
+            // Log the exception
+            Log::error('Exception:', $e->getMessage());
+
+            return response()->json(['message' => 'Login failed. Please try again.'], 500);
         }
-        public function logout(Request $request)
-        {
-            if ($request->user()) {
-                $request->user()->tokens()->delete();
-                return response()->json(['message' => 'Logged out successfully'], 200);
-            } else {
-                return response()->json(['message' => 'User not authenticated'], 401);
-            }
-        }
+    }
 
+    // Logout function handles user deauthentication
+   public function logout(Request $request)
+{
+    // Check if the user is authenticated
+    if ($request->user()) {
+        // Delete all tokens for the authenticated user, effectively logging them out
+        $request->user()->tokens()->delete();
 
-
+        // Return success message
+        return response()->json(['message' => 'Logged out successfully'], 200);
+    } else {
+        // Return error message if no user is authenticated
+        return response()->json(['message' => 'User not authenticated'], 401);
+    }
 }
-
+}
