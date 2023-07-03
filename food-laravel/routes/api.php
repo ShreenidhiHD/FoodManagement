@@ -26,5 +26,8 @@ Route::post('/login', [UserController::class, 'login']);
 // Route for user logout, accessible only for authenticated users
 Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
 
+Route::middleware('auth:sanctum')->get('/user/profile', [UserController::class, 'getProfile']);
+Route::middleware('auth:sanctum')->put('/user/profile', [UserController::class, 'updateProfile']);
+
 // Route to fetch application settings
 Route::get('/settings', [SettingsController::class, 'getSettings']);

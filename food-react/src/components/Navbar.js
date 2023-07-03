@@ -62,7 +62,7 @@ const ResponsiveAppBar = () => {
           </Box>
           {isLoggedIn ? (
             <>
-              <Button component={RouterLink} to="/profile" color="inherit">
+              <Button component={RouterLink} to="/userprofile" color="inherit">
                 Profile
               </Button>
               <Logout onLogout={handleLogout} /> {/* Display the Logout button if the user is logged in */}

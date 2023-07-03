@@ -8,6 +8,7 @@ import Contact from './pages/Contact';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import UserHome from './pages/User/UserHome';
+import UserProfile from './pages/User/UserProfile';
 import SettingsProvider from './server/SettingsProvider';
 
 
@@ -27,6 +28,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/userhome" element={<AuthenticatedRoute><UserHome /></AuthenticatedRoute>} />
+            <Route path="/userprofile" element={<AuthenticatedRoute><UserProfile /></AuthenticatedRoute>} />
           </Routes>
         </div>
       </Router>
