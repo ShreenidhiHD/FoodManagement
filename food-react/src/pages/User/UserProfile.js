@@ -5,7 +5,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../css/Home.css';
 import { Alert } from '@mui/material';
-
+import ChangePassword from '../../components/ChangePassword';
 const Profile = () => {
     const settings = useContext(SettingsContext);
     const [name, setName] = useState('');
@@ -138,6 +138,7 @@ const Profile = () => {
         </form>
         </CardContent>
         </Card>
+        <ChangePassword />
       </Container>
     </div>
   );
