@@ -8,6 +8,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use PDOException;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class UserController extends Controller
@@ -101,17 +103,58 @@ class UserController extends Controller
 
     // Logout function handles user deauthentication
    public function logout(Request $request)
-{
-    // Check if the user is authenticated
-    if ($request->user()) {
-        // Delete all tokens for the authenticated user, effectively logging them out
-        $request->user()->tokens()->delete();
+    {
+        // Check if the user is authenticated
+        if ($request->user()) {
+            // Delete all tokens for the authenticated user, effectively logging them out
+            $request->user()->tokens()->delete();
 
-        // Return success message
-        return response()->json(['message' => 'Logged out successfully'], 200);
-    } else {
-        // Return error message if no user is authenticated
-        return response()->json(['message' => 'User not authenticated'], 401);
+            // Return success message
+            return response()->json(['message' => 'Logged out successfully'], 200);
+        } else {
+            // Return error message if no user is authenticated
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
     }
-}
+
+    public function getProfile(Request $request)
+    {
+        $user = Auth::guard('sanctum')->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+
+        return response()->json($user);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'mobile' => 'required',
+            'email' => 'required|email|unique:users,email,' . Auth::guard('sanctum')->id(),
+            'whatsapp' => 'required',
+            'address' => 'required',
+            'pincode' => 'required'
+        ]);
+
+        $user = Auth::guard('sanctum')->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+
+        $user->name = $request->name;
+        $user->mobile = $request->mobile;
+        $user->email = $request->email;
+        $user->whatsapp = $request->whatsapp;
+        $user->address = $request->address;
+        $user->pincode = $request->pincode;
+
+        $user->save();
+
+        return response()->json(['message' => 'Profile updated successfully']);
+    }
+
 }
