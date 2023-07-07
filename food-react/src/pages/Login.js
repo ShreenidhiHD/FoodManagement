@@ -13,6 +13,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+
+
 async function loginUser(email, password) {
   try {
     const response = await fetch('http://localhost:8000/api/login', {
@@ -67,6 +69,7 @@ export default function SignInSide() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+     
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid

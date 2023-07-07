@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import { Link as RouterLink } from 'react-router-dom';
 import { SettingsContext } from '../server/SettingsProvider';
 import Logout from './Logout';
+import DonateButton from './DonateButton';
 
 // Array of pages to be displayed in the navigation bar
 const pages = [
@@ -65,6 +66,7 @@ const ResponsiveAppBar = () => {
               <Button component={RouterLink} to="/userprofile" color="inherit">
                 Profile
               </Button>
+              <DonateButton/>
               <Logout onLogout={handleLogout} /> {/* Display the Logout button if the user is logged in */}
             </>
           ) : (

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Env;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
-
+use App\Http\Controllers\FoodDonationsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,5 +29,7 @@ Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanc
 Route::middleware('auth:sanctum')->get('/user/profile', [UserController::class, 'getProfile']);
 Route::middleware('auth:sanctum')->put('/user/profile', [UserController::class, 'updateProfile']);
 Route::middleware('auth:sanctum')->put('/user/change-password', [UserController::class, 'changePassword']);
+Route::middleware('auth:sanctum')->post('addfood', [FoodDonationsController::class, 'store']);
+
 // Route to fetch application settings
 Route::get('/settings', [SettingsController::class, 'getSettings']);
