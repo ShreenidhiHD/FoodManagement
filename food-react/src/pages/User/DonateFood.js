@@ -14,11 +14,11 @@ function DonateFood() {
     const [deliveryStatus, setDeliveryStatus] = useState('');
     const [price, setPrice] = useState('');
     const [expiryInDays, setExpiryInDays] = useState('');
-    const [foodType, setFoodType] = useState('');
+    const [foodType, setFoodType] = useState('veg');
     const [eventName, setEventName] = useState('');
     const [description, setDescription] = useState('');
     const [preparedDate, setPreparedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-    const [status, setStatus] = useState('');
+    const [status, setStatus] = useState('active');
     const [message, setMessage] = useState(null);
     const [messageType, setMessageType] = useState('success');
 
@@ -60,14 +60,32 @@ function DonateFood() {
           if (response.status === 200) {
             console.log("success", response);
           } else {
+            setMessage(response.data.message);
+          setMessageType('error');
+            // Clear the message after 3 seconds
+            setTimeout(() => {
+              setMessage('');
+              setMessageType('');
+            }, 3000);
             console.error('Error:', response);
           }
         } catch (error) {
-          console.error('Error:', error);
+          let errorMessage;
+        if (typeof error.response.data.message === 'object') {
+            errorMessage = Object.values(error.response.data.message).join(' ');
+        } else {
+            errorMessage = error.response.data.message;
         }
+        setMessage(errorMessage);
+        setMessageType('error');
+          // Clear the message after 3 seconds
+          setTimeout(() => {
+            setMessage('');
+            setMessageType('');
+          }, 3000);
       };
       
-
+    }
   return (
     <div style={{ marginTop: '20px', padding: '30px' }}>
       <h1 className='text-center'>Add Food details here</h1>
@@ -104,8 +122,8 @@ function DonateFood() {
                     id="foodType"
                     label="Food Type"
                     name="foodType"
+                    value={foodType}
                     onChange={(e) => setFoodType(e.target.value)} 
-                    defaultValue="veg" 
                   >
                     <MenuItem value="veg">Veg</MenuItem>
                     <MenuItem value="non_veg">Non-Veg</MenuItem>
@@ -130,8 +148,8 @@ function DonateFood() {
                     id="status"
                     label="Status"
                     name="status"
+                    value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    defaultValue="active" 
                   >
                     <MenuItem value="active">Active</MenuItem>
                     <MenuItem value="deactive">Deactive</MenuItem>
