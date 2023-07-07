@@ -6,7 +6,8 @@ const BrowseMore = ({ isAuthenticated }) => {
   const buttonStyle = {
     marginTop: '50px',
   };
-
+   isAuthenticated = localStorage.getItem('authToken') !== null;
+  
   if (isAuthenticated) {
     // User is logged in, show the browse more button with blue color
     return (
