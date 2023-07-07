@@ -6,6 +6,7 @@ import Footer from '../../components/Footer';
 import { SettingsContext } from '../../server/SettingsProvider';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../css/Home.css';
+import BrowseMore from '../../components/BrowseMore';
 
 const Home = () => {
   const settings = useContext(SettingsContext);
@@ -33,6 +34,7 @@ const Home = () => {
             </Grid>
           </Grid>
         </>
+        <BrowseMore/>
       </Container>
       <Footer />
     </div>
