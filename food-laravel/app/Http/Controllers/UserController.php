@@ -156,5 +156,46 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Profile updated successfully']);
     }
+    public function changePassword(Request $request)
+    {
+        try {
+            // Validate the request data
+            $request->validate([
+                'current_password' => 'required',
+                'new_password' => 'required|min:8',
+            ]);
+
+            $user = $request->user();  // Retrieve the authenticated user
+
+            // Verify the current password
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json(['message' => 'Current password is incorrect.'], 401);
+            }
+
+            // Update the password
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return response()->json(['message' => 'Password updated successfully.'], 200);
+        } catch (QueryException $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        } catch (PDOException $e) {
+            // Log the database connection error
+            Log::error('Database connection error:', $e->getMessage());
+
+            return response()->json(['message' => 'Database connection failed. Please try again later.'], 503);
+        } catch (ValidationException $e) {
+            // Log the validation error
+            Log::error('Validation error:', $e->errors());
+
+            return response()->json(['message' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            // Log the exception
+            Log::error('Exception:', $e->getMessage());
+
+            return response()->json(['message' => 'Password change failed. Please try again.'], 500);
+        }
+    }
+
 
 }
