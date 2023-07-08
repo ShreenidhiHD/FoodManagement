@@ -53,6 +53,39 @@ class FoodDonationsController extends Controller
         ], 200);
 
     }
+    public function userDonations(Request $request) {
+        // Sanctum provides a handy way to get the authenticated user
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
     
+        $donations = (new Donation)->userDonations($user->id);
+    
+        // Structure the data as needed for the frontend
+        $columns = [
+            ['field' => 'id', 'headerName' => 'ID'],
+            ['field' => 'event_name', 'headerName' => 'Event Name'],
+            ['field' => 'prepared_date', 'headerName' => 'Prepared Date'],
+            ['field' => 'status', 'headerName' => 'Status']
+        ];
+        
+        $rows = $donations->map(function($donation) {
+            return [
+                'id' => $donation->id,
+                'event_name' => $donation->event_name,
+                'prepared_date' => $donation->prepared_date,
+                'status' => $donation->status,
+
+            ];
+        });
+    
+        return response()->json([
+            'columns' => $columns,
+            'rows' => $rows
+        ]);
+    }
+    
+
 }
 

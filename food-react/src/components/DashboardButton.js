@@ -6,7 +6,7 @@ const DashboardButton = () => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate("user/dashboard");
+        navigate("/dashboard");
     }
 
     return (
