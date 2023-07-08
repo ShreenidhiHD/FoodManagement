@@ -135,9 +135,6 @@ function DonateFood() {
                 <TextField fullWidth label="Event Name" name="eventName" variant="outlined" onChange={(e) => setEventName(e.target.value)} required />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField fullWidth label="Description" name="description" variant="outlined" onChange={(e) => setDescription(e.target.value)} multiline rows={4} required />
-              </Grid>
-              <Grid item xs={12} sm={4}>
                 <TextField fullWidth label="Prepared Date" name="preparedDate" type="date"  value={preparedDate}  onChange={(e) => setPreparedDate(e.target.value)} InputLabelProps={{ shrink: true }} variant="outlined" required />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -156,10 +153,15 @@ function DonateFood() {
                   </Select>
                 </FormControl>
               </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField fullWidth label="Description" name="description" variant="outlined" onChange={(e) => setDescription(e.target.value)} multiline rows={4} required />
+              </Grid>
             </Grid>
-            <Button style={{ marginTop: '20px' }} variant="contained" color="primary" type="submit">
+            <Grid item xs={12} container justifyContent="flex-end">
+            <Button style={{ marginTop: '20px' }} variant="contained"sx={{ mr: 5, width: 200 }} color="primary" type="submit">
               Upload
             </Button>
+            </Grid>
           </form>
         </CardContent>
       </Card>
