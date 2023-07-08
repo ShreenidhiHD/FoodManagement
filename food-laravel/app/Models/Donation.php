@@ -20,6 +20,8 @@ class Donation extends Model
         'Created_by',
     ];
     
-
+    public function userDonations($user_id) {
+        return $this->where('Created_by', $user_id)->get();
+    }
    
 }

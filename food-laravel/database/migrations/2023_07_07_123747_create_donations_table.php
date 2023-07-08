@@ -25,7 +25,7 @@ class CreateDonationsTable extends Migration
             $table->text('description');
             $table->date('prepared_date')->default(now());
             $table->timestamps();
-            $table->enum('status',['active', 'deactive','expired'])->default('active');
+            $table->enum('status',['active', 'deactive','expired','completed'])->default('active');
             $table->integer('Created_by');
         });
     }

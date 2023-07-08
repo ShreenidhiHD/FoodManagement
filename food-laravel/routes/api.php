@@ -25,11 +25,11 @@ Route::post('/login', [UserController::class, 'login']);
 
 // Route for user logout, accessible only for authenticated users
 Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
-
+Route::middleware('auth:sanctum')->get('/validate-token',[UserController::class, 'validateToken']);
 Route::middleware('auth:sanctum')->get('/user/profile', [UserController::class, 'getProfile']);
 Route::middleware('auth:sanctum')->put('/user/profile', [UserController::class, 'updateProfile']);
 Route::middleware('auth:sanctum')->put('/user/change-password', [UserController::class, 'changePassword']);
 Route::middleware('auth:sanctum')->post('addfood', [FoodDonationsController::class, 'store']);
-
+Route::middleware('auth:sanctum')->get('/user-donations', [FoodDonationsController::class, 'userDonations']);
 // Route to fetch application settings
 Route::get('/settings', [SettingsController::class, 'getSettings']);

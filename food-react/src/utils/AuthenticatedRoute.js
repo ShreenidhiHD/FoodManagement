@@ -1,23 +1,45 @@
+import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 function AuthenticatedRoute({ children }) {
-  // Check if the user is authenticated (if there is an authToken in local storage)
-  const isAuthenticated = localStorage.getItem('authToken') !== null;
-
-  // Get the current location to redirect back to it after successful login
   const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('authToken'));
 
-  // If the user is not authenticated, navigate to the login page
-  // and pass the current location in the state to redirect back to it later
-  if (!isAuthenticated) {
+  useEffect(() => {
+    const validateToken = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/validate-token', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          },
+        });
+
+        if (response.status !== 200) {
+          setIsLoggedIn(false);
+          localStorage.removeItem('authToken');
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+        localStorage.removeItem('authToken');
+      }
+    };
+
+    // Check validation when component mounts
+    validateToken();
+
+    // Set up interval to validate every minute
+    const interval = setInterval(validateToken, 60000); // 60000 milliseconds = 1 minute
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!isLoggedIn) {
     return <Navigate to="/login" state={{ from: location }} />;
   }
 
-  // If the user is authenticated, render the children components
   return children;
 }
 
 export default AuthenticatedRoute;
-
-
-//In this component, we first check if there is an 'authToken' in the local storage. If not, we navigate to the login page, and we save the current location in the state so that we can redirect back to it after login. If there is an 'authToken', we render the children components, meaning that the user can access the route they were trying to get to.

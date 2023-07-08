@@ -197,5 +197,20 @@ class UserController extends Controller
         }
     }
 
+    public function validateToken(Request $request)
+    {
+        try {
+            // Get the authenticated user using Sanctum's "user" method
+            $user = $request->user();
 
+            if (!$user) {
+                return response()->json(['message' => 'Invalid token'], 401);
+            }
+
+            // Token is valid, return success response
+            return response()->json(['message' => 'Token validated successfully'], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Token validation error'], 500);
+        }
+    }
 }
