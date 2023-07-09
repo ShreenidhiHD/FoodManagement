@@ -39,7 +39,7 @@ const RecipeReviewCard = ({ item }) => {
             <MoreVertIcon />
           </IconButton>
         }
-        title={"Created by: " + item.Created_by}
+        title={"Created by: " + item.username}
         subheader={item.prepared_date}
       />
       <Typography variant="subtitle2" color="text.secondary" align="right">
