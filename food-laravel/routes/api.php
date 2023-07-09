@@ -35,3 +35,4 @@ Route::get('/donations/{id}', [FoodDonationsController::class, 'show'])->middlew
 Route::put('/donations/{id}', [FoodDonationsController::class, 'update'])->middleware('auth:sanctum');
 // Route to fetch application settings
 Route::get('/settings', [SettingsController::class, 'getSettings']);
+Route::get('/unittest', [FoodDonationsController::class, 'donation_list']);

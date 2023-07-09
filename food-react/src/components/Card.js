@@ -2,7 +2,6 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Avatar from '@mui/material/Avatar';
@@ -21,13 +20,14 @@ const RequestButton = styled(Button)`
   }
 `;
 
-export default function RecipeReviewCard() {
+const RecipeReviewCard = ({ item }) => {
+
   const handleRequestClick = () => {
     // Handle the request click action
   };
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -39,29 +39,28 @@ export default function RecipeReviewCard() {
             <MoreVertIcon />
           </IconButton>
         }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
+        title={"Created by: " + item.username}
+        subheader={item.prepared_date}
       />
-      <CardMedia
-        component="img"
-        height="194"
-        image="https://source.unsplash.com/random"
-        alt="Random dish"
-      />
+      <Typography variant="subtitle2" color="text.secondary" align="right">
+        {item.verified ? "verified" : ""}
+      </Typography>
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the mussels,
-          if you like.
+          Food type: {item.food_type} <br/>
+          Number of plates: {item.number_of_plates} <br/>
+          Location: {item.location}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
         <RequestButton onClick={handleRequestClick}>Request</RequestButton>
-        <IconButton aria-label="share" style={{ marginRight: '10px' }}></IconButton>
+        <IconButton aria-label="share" style={{ marginRight: '10px' }} onClick={() => window.open(item.shareableLink, '_blank')}></IconButton>
         <IconButton aria-label="share">
             <ShareIcon />
         </IconButton>
       </CardActions>
     </Card>
   );
-}
+};
+
+export default RecipeReviewCard;
