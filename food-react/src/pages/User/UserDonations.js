@@ -37,7 +37,7 @@ const UserDonations = () => {
       <Card>
         <CardContent>
             <h1 className='text-center'>My Donations</h1>
-          <DataTable columns={columns} rows={rows} />
+          <DataTable columns={columns} rows={rows} detailPageLink={id => `/donations/${id}`} />
         </CardContent>
       </Card>
     </Container>
