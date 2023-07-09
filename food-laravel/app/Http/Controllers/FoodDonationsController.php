@@ -56,7 +56,6 @@ class FoodDonationsController extends Controller
             'message' => 'Food donation created successfully.',
             'donation' => $donation, // Optional: Include the created donation in the response
         ], 200);
-
     }
     public function userDonations(Request $request) {
         // Sanctum provides a handy way to get the authenticated user
@@ -89,6 +88,36 @@ class FoodDonationsController extends Controller
             'columns' => $columns,
             'rows' => $rows
         ]);
+    }
+
+    //Get user details
+    public function get_user_details_by_userid($id){
+        $user_array=Array();
+        //Fetch from users table
+        $users = DB::table('users')->find($id);
+        foreach($users as $user){
+            if($user['status']!='deactived'){
+                //Assigning to temprovary array
+                $temp=Array();
+                $temp['user_id']=$user['id'];
+                $temp['user_name']=$user['name'];
+                ($user['status']=='verified')?$temp['is_verified']=true:$temp['is_verified']=false;
+                array_push($user_array,$temp);
+            }
+        }
+        return $user_array;
+    }
+
+    //Returns all active donation list
+    public function donation_list()
+    {
+        
+        $donation = Donation::get();
+        if (!$donation) {
+            return response()->json(['message' => 'Donation not found'], 404);
+        }
+    
+        return response()->json(['donation' => $donation], 200);
     }
     
     public function show($id)
