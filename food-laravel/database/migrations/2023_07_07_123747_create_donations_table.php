@@ -27,6 +27,10 @@ class CreateDonationsTable extends Migration
             $table->timestamps();
             $table->enum('status',['active', 'deactive','expired','completed'])->default('active');
             $table->integer('Created_by');
+            $table->text('country');
+            $table->text('state');
+            $table->text('city');
+            $table->integer('pincode');
         });
     }
 

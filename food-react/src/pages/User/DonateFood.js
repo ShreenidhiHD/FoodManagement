@@ -43,6 +43,10 @@ function DonateFood() {
             description,
             prepared_date: preparedDate,
             status,
+            country: country,
+            state: state,
+            city: city,
+            pincode: pincode,
           };
           
           const response = await axios.post('http://localhost:8000/api/addfood', foodData, {
@@ -152,6 +156,18 @@ function DonateFood() {
                     <MenuItem value="deactive">Deactive</MenuItem>
                   </Select>
                 </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField fullWidth label="Country" name="country" variant="outlined" onChange={(e) => setCountry(e.target.value)} multiline rows={4} required />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField fullWidth label="State" name="state" variant="outlined" onChange={(e) => setState(e.target.value)} multiline rows={4} required />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField fullWidth label="City" name="city" variant="outlined" onChange={(e) => setCity(e.target.value)} multiline rows={4} required />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField fullWidth label="Pincode" name="pincode" variant="outlined" onChange={(e) => setPincode(e.target.value)} multiline rows={4} required />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField fullWidth label="Description" name="description" variant="outlined" onChange={(e) => setDescription(e.target.value)} multiline rows={4} required />

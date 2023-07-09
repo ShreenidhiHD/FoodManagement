@@ -32,6 +32,10 @@ class FoodDonationsController extends Controller
             'description' => 'required|string',
             'prepared_date' => 'required|date',
             'status' => 'required|string',
+            'country' => 'required|string',
+            'city' => 'required|string',
+            'pincode' =>'required| string',
+            'state' => 'required| string',
         ]);
     
         // Get the authenticated user
