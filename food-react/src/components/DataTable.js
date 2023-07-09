@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Table,
   TableHead,
@@ -12,7 +13,7 @@ import {
 } from '@mui/material';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 
-const DataTable = ({ columns, rows }) => {
+const DataTable = ({ columns, rows, detailPageLink}) => {
   const [sortField, setSortField] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
   const [searchQuery, setSearchQuery] = useState('');
@@ -121,10 +122,11 @@ const DataTable = ({ columns, rows }) => {
                 <TableCell key={column.field}>{row[column.field]}</TableCell>
               ))}
               <TableCell>
-                <Button variant="contained" size="small">
-                  View
-                </Button>
-              </TableCell>
+              <Button variant="contained" size="small" component={Link} to={detailPageLink(row.id)}>
+                View
+              </Button>
+            </TableCell>
+
             </TableRow>
           ))}
         </TableBody>
