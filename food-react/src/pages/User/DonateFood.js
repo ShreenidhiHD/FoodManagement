@@ -37,7 +37,7 @@ function DonateFood() {
           }
           
           const foodData = {
-            number_of_plates: numberOfPlates,
+            number_of_plates: parseInt(numberOfPlates),
             location,
             delivery_status: deliveryStatus,
             price,
@@ -52,7 +52,7 @@ function DonateFood() {
             city: city,
             pincode: pincode,
           };
-          
+          console.log(foodData);
           const response = await axios.post('http://localhost:8000/api/addfood', foodData, {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -65,8 +65,12 @@ function DonateFood() {
               setMessage('');
               setMessageType('');
             }, 3000);
+            
           if (response.status === 200) {
             console.log("success", response);
+            const form = document.getElementById('donatefood');
+            form.reset();
+           
           } else {
             setMessage(response.data.message);
           setMessageType('error');
@@ -105,10 +109,10 @@ function DonateFood() {
       )}
         <CardContent>
         
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} id="donatefood">
             <Grid container spacing={3}>
               <Grid item xs={12} sm={4}>
-                <TextField fullWidth label="Number of Plates" name="numberOfPlates" type="number" variant="outlined" value={numberOfPlates} onChange={(e) => setNumberOfPlates(e.target.value)} required />
+                <TextField fullWidth label="Number of Plates" name="numberOfPlates" type="number" id="numberofplates" variant="outlined"  onChange={(e) => setNumberOfPlates(e.target.value)} required />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField fullWidth label="Location" name="location" variant="outlined" onChange={(e) => setLocation(e.target.value)} required />
@@ -162,16 +166,16 @@ function DonateFood() {
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField fullWidth label="Country" name="country" variant="outlined" onChange={(e) => setCountry(e.target.value)} multiline rows={4} required />
+                <TextField fullWidth label="Country" name="country" variant="outlined" onChange={(e) => setCountry(e.target.value)}   required />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField fullWidth label="State" name="state" variant="outlined" onChange={(e) => setState(e.target.value)} multiline rows={4} required />
+                <TextField fullWidth label="State" name="state" variant="outlined" onChange={(e) => setState(e.target.value)}   required />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField fullWidth label="City" name="city" variant="outlined" onChange={(e) => setCity(e.target.value)} multiline rows={4} required />
+                <TextField fullWidth label="City" name="city" variant="outlined" onChange={(e) => setCity(e.target.value)}   required />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField fullWidth label="Pincode" name="pincode" variant="outlined" onChange={(e) => setPincode(e.target.value)} multiline rows={4} required />
+                <TextField fullWidth label="Pincode" name="pincode" type="number" variant="outlined" onChange={(e) => setPincode(e.target.value)}  required />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField fullWidth label="Description" name="description" variant="outlined" onChange={(e) => setDescription(e.target.value)} multiline rows={4} required />
