@@ -34,7 +34,7 @@ class FoodDonationsController extends Controller
             'status' => 'required|string',
             'country' => 'required|string',
             'city' => 'required|string',
-            'pincode' =>'required| string',
+            'pincode' =>'required| integer',
             'state' => 'required| string',
         ]);
     
