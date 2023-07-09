@@ -19,6 +19,10 @@ function DonateFood() {
     const [description, setDescription] = useState('');
     const [preparedDate, setPreparedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [status, setStatus] = useState('active');
+    const [city, setCity] = useState('');
+    const [country, setCountry] = useState('');
+    const [state, setState] = useState('');
+    const [pincode, setPincode] = useState('');
     const [message, setMessage] = useState(null);
     const [messageType, setMessageType] = useState('success');
 
