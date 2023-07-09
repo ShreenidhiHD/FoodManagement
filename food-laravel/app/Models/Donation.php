@@ -18,6 +18,10 @@ class Donation extends Model
         'prepared_date',
         'status',
         'Created_by',
+        'country',
+        'city',
+        'state',
+        'pincode',
     ];
     
     public function userDonations($user_id) {
