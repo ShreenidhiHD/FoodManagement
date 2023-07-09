@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
+use App\Helpers\EmailHelper;
 use PDOException;
 
 class FoodDonationsController extends Controller
@@ -90,6 +91,64 @@ class FoodDonationsController extends Controller
         ]);
     }
     
+    public function show($id)
+    {
+        $donation = Donation::find($id);
+    
+        if (!$donation) {
+            return response()->json(['message' => 'Donation not found'], 404);
+        }
+    
+        return response()->json(['donation' => $donation], 200);
+    }
+    public function update(Request $request, $id)
+    {
+        // Validation...
+        $validated = $request->validate([
+            'number_of_plates' => 'required|integer',
+            'location' => 'required|string',
+            'delivery_status' => 'required|string',
+            'price' => 'required|numeric',
+            'expiry_in_days' => 'required|integer',
+            'food_type' => 'required|string',
+            'event_name' => 'required|string',
+            'description' => 'required|string',
+            'prepared_date' => 'required|date',
+            'status' => 'required|string',
+            'country' => 'required|string',
+            'city' => 'required|string',
+            'pincode' =>'required| integer',
+            'state' => 'required| string',
+        ]);
 
+        // Get the donation from the database
+        $donation = Donation::find($id);
+
+        if (!$donation) {
+            return response()->json(['message' => 'Donation not found'], 404);
+        }
+
+        // Update the donation
+        $donation->update($validated);
+         
+        // Send email notification
+        $emailData = [
+            'to' => 'shreenidhishree34@gmail.com',
+            'subject' => 'Donation Updated',
+            'data' => [
+                'name' => 'John Doe',
+                'message' => 'The donation has been updated. Donation ID: ' . $donation->id,
+            ],
+        ];
+        
+        EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+        
+
+        return response()->json([
+            'message' => 'Donation updated successfully.',
+            'donation' => $donation,
+        ], 200);
+    }
+    
 }
 

@@ -31,5 +31,7 @@ Route::middleware('auth:sanctum')->put('/user/profile', [UserController::class, 
 Route::middleware('auth:sanctum')->put('/user/change-password', [UserController::class, 'changePassword']);
 Route::middleware('auth:sanctum')->post('addfood', [FoodDonationsController::class, 'store']);
 Route::middleware('auth:sanctum')->get('/user-donations', [FoodDonationsController::class, 'userDonations']);
+Route::get('/donations/{id}', [FoodDonationsController::class, 'show'])->middleware('auth:sanctum');
+Route::put('/donations/{id}', [FoodDonationsController::class, 'update'])->middleware('auth:sanctum');
 // Route to fetch application settings
 Route::get('/settings', [SettingsController::class, 'getSettings']);
