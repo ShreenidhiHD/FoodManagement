@@ -19,6 +19,7 @@ class AddFieldsToUsersTable extends Migration
             $table->string('address')->nullable();
             $table->string('pincode')->nullable();
             $table->string('role')->default('user')->nullable(false);
+            $table->enum('status', ['active', 'deactived', 'verified'])->default('active')->nullable(false);
         });
     }
 
@@ -35,6 +36,7 @@ class AddFieldsToUsersTable extends Migration
             $table->dropColumn('address');
             $table->dropColumn('pincode');
             $table->string('role')->default('user')->nullable(false);
+            $table->enum('status', ['active', 'deactived', 'verified'])->default('active')->nullable(false);
         });
     }
 }
