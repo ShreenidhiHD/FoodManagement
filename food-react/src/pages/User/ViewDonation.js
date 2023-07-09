@@ -100,7 +100,7 @@ function ViewDonation() {
           Authorization: `Bearer ${authToken}`,
         },
       });
-      console.log(response);
+      
       setMessage(response.data.message);
       setMessageType('success');
   
@@ -124,7 +124,7 @@ function ViewDonation() {
   
   return (
     <div style={{ marginTop: '20px', padding: '30px' }}>
-      <h1 className='text-center'>View or Edit Food listingdetails here</h1>
+      <h1 className='text-center'>View or Edit Food listing details here</h1>
       <Card>
       {message && (
         <Alert severity={messageType}>
@@ -207,11 +207,10 @@ function ViewDonation() {
             </Grid>
             <Grid item xs={12} container justifyContent="flex-end">
                 <Button style={{ marginTop: '20px' }} variant="contained" sx={{ mr: 5, width: 200 }} color="primary" type="submit">
-                Upload
+                Update
                 </Button>
             </Grid>
             </form>
-
         </CardContent>
       </Card>
     </div>
