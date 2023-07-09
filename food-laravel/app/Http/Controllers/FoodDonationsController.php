@@ -101,6 +101,7 @@ class FoodDonationsController extends Controller
                 //Assigning to array
                 $user_array['user_id']=$user->id;
                 $user_array['user_name']=$user->name;
+                $user_array['user_status']=$user->status;
                 ($user->status=='verified')?$user_array['is_verified']=true:$user_array['is_verified']=false;
             }
         }
@@ -116,7 +117,7 @@ class FoodDonationsController extends Controller
             $temp=Array();
             //Get user details
             $user=$this->get_user_details_by_userid($donation['Created_by']);
-            if($user['is_verified'] and $donation['status']=='active'){
+            if($user['user_status']!='deactived' and $donation['status']=='active'){
                 if(is_array($user) and count($user)>0){
                     $temp['userid']=$user['user_id'];
                     $temp['username']=$user['user_name'];
