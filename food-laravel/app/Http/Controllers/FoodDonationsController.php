@@ -116,28 +116,30 @@ class FoodDonationsController extends Controller
             $temp=Array();
             //Get user details
             $user=$this->get_user_details_by_userid($donation['Created_by']);
-            if(is_array($user) and count($user)>0){
-                $temp['userid']=$user['user_id'];
-                $temp['username']=$user['user_name'];
-                $dontempations_list['verified']=$user['is_verified'];
+            if($user['is_verified'] and $donation['status']=='active'){
+                if(is_array($user) and count($user)>0){
+                    $temp['userid']=$user['user_id'];
+                    $temp['username']=$user['user_name'];
+                    $temp['verified']=$user['is_verified'];
+                }
+                $temp['id']=$donation['id'];
+                $temp['number_of_plates']=$donation['number_of_plates'];
+                $temp['location']=ucfirst($donation['location']);
+                $temp['delivery_status']=ucfirst($donation['delivery_status']);
+                $temp['price']=number_format($donation['price'],2);
+                $temp['expiry_in_days']=$donation['expiry_in_days']." Days";
+                $temp['food_type']=ucfirst($donation['food_type']);
+                $temp['event_name']=ucfirst($donation['event_name']);
+                $temp['description']=ucfirst($donation['description']);
+                $temp['prepared_date']=date_format(date_create($donation['prepared_date']),'d-m-Y');
+                $temp['created_at']=date_format(date_create($donation['created_at']),'d-m-Y');
+                $temp['country']=ucfirst($donation['country']);
+                $temp['state']=ucfirst($donation['state']);
+                $temp['city']=ucfirst($donation['city']);
+                $temp['pincode']=$donation['pincode'];
+    
+                array_push($donations_list,$temp);
             }
-            $temp['id']=$donation['id'];
-            $temp['number_of_plates']=$donation['number_of_plates'];
-            $temp['location']=ucfirst($donation['location']);
-            $temp['delivery_status']=ucfirst($donation['delivery_status']);
-            $temp['price']=number_format($donation['price'],2);
-            $temp['expiry_in_days']=$donation['expiry_in_days']." Days";
-            $temp['food_type']=ucfirst($donation['food_type']);
-            $temp['event_name']=ucfirst($donation['event_name']);
-            $temp['description']=ucfirst($donation['description']);
-            $temp['prepared_date']=date_format(date_create($donation['prepared_date']),'d-m-Y');
-            $temp['created_at']=date_format(date_create($donation['created_at']),'d-m-Y');
-            $temp['country']=ucfirst($donation['country']);
-            $temp['state']=ucfirst($donation['state']);
-            $temp['city']=ucfirst($donation['city']);
-            $temp['pincode']=$donation['pincode'];
-
-            array_push($donations_list,$temp);
         }
         if (count($donations_list)<=0) {
             return response()->json(['message' => 'Donation not found'], 404);
