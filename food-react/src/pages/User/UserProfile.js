@@ -120,7 +120,7 @@ const Profile = () => {
               <TextField label="Mobile" variant="outlined" value={mobile} onChange={(event) => handleInputChange(event, setMobile)} fullWidth required />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <TextField label="Email" variant="outlined" value={email} onChange={(event) => handleInputChange(event, setEmail)} fullWidth required />
+              <TextField label="Email"   disabled={!isEdit} variant="outlined" value={email} onChange={(event) => handleInputChange(event, setEmail)} fullWidth required />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField label="Whatsapp" variant="outlined" value={whatsapp} onChange={(event) => handleInputChange(event, setWhatsapp)} fullWidth required />
