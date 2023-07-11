@@ -98,4 +98,41 @@ class PurchaseController extends Controller
         $this->is_authorised($request);
         return $this->cancelPurchase($request, $id);
     }
+
+    public function purchase_list(Request $request,$id) {
+        // Sanctum provides a handy way to get the authenticated user
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+    
+        $purchases = DB::table('purchases')->where('Created_by',$id)->get();
+    
+        // Structure the data as needed for the frontend
+        $columns = [
+            ['field' => 'id', 'headerName' => 'ID'],
+            ['field' => 'event_name', 'headerName' => 'Event Name'],
+            ['field' => 'description', 'headerName' => 'Description'],
+            ['field' => 'status', 'headerName' => 'Status'],
+            ['field' => 'created_at', 'headerName' => 'Request date']
+        ];
+        
+        $rows = $purchases->map(function($purchases) {
+            $event_name="";
+            $event_names=DB::table('donations')->where('id',$purchases->donation_id)->first();
+            $event_name=$event_names->event_name;
+            return [
+                'id' => $purchases->id,
+                'event_name' => $event_name,
+                'description' => $purchases->description,
+                'status' => $purchases->status,
+                'created_at'=>$purchases->created_at,
+            ];
+        });
+    
+        return response()->json([
+            'columns' => $columns,
+            'rows' => $rows
+        ]);
+    }
 }
