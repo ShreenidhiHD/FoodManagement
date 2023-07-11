@@ -1,26 +1,29 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Container, Grid } from '@mui/material';
-import Card from '../../components/Card';
 import Carousel from '../../components/Carousel';
 import Footer from '../../components/Footer';
 import { SettingsContext } from '../../server/SettingsProvider';
-import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../css/Home.css';
 import BrowseMore from '../../components/BrowseMore';
+import axios from 'axios';
+import RecipeReviewCard from '../../components/Card';
 
-const Home = () => {
+const UserHome = () => {
   const settings = useContext(SettingsContext);
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/unittest')
-      .then(response => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/unittest');
         setData(response.data.donation);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   if (!settings) {
@@ -37,7 +40,7 @@ const Home = () => {
           <Grid container spacing={2} justifyContent="center">
             {data.map((item, index) => (
               <Grid item key={index}>
-                <Card item={item} />
+                <RecipeReviewCard item={item} />
               </Grid>
             ))}
           </Grid>
@@ -49,4 +52,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default UserHome;

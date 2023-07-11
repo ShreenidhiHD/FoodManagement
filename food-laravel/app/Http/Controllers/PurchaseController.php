@@ -21,21 +21,48 @@ class PurchaseController extends Controller
     }
 
     // Function to handle purchase creation
-    public function createPurchase(Request $request) {
+    public function createPurchase(Request $request)
+    {
         $user = $request->user();
-        $purchase = new Purchase;
-        $purchase->donation_id = $request->donation_id;
-        $purchase->Crated_by = $user->id;
-        $purchase->status = 'pending';
-        $purchase->description = $request->description;
-        $purchase->save();
+        $purchase = Purchase::where('donation_id', $request->donation_id)
+            ->where('Created_by', $user->id)
+            ->first();
 
-        return response()->json(['message' => 'Request successful'], 200);
+        if ($purchase) {
+            // If a purchase entry already exists, update the status to pending
+            $purchase->status = 'pending';
+            $purchase->description = $request->description;
+            $purchase->save();
+
+            return response()->json(['message' => 'Request updated successfully'], 200);
+        } else {
+            // If no purchase entry exists, create a new one
+            $purchase = new Purchase;
+            $purchase->donation_id = $request->donation_id;
+            $purchase->Created_by = $user->id;
+            $purchase->status = 'pending';
+            $purchase->description = $request->description;
+            $purchase->save();
+
+            return response()->json(['message' => 'Request created successfully'], 200);
+        }
     }
 
     // Function to handle purchase cancellation
-    public function cancelPurchase(Request $request, $id) {
-        $purchase = Purchase::findOrFail($id);
+    public function cancelPurchase(Request $request, $id)
+    {
+        $purchase = Purchase::where('id', $id)
+            ->where('Created_by', Auth::id())
+            ->first();
+
+        if (!$purchase) {
+            return response()->json(['message' => 'Purchase not found'], 404);
+        }
+
+        if ($purchase->status == 'cancelled') {
+            return response()->json(['message' => 'Purchase already cancelled'], 200);
+        }
+
         $purchase->status = 'cancelled';
         $purchase->save();
 
