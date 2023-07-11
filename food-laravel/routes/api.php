@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Env;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\FoodDonationsController;
+use App\Http\Controllers\PurchaseController;
+;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,3 +38,4 @@ Route::put('/donations/{id}', [FoodDonationsController::class, 'update'])->middl
 // Route to fetch application settings
 Route::get('/settings', [SettingsController::class, 'getSettings']);
 Route::get('/unittest', [FoodDonationsController::class, 'donation_list']);
+Route::get('/test', [PurchaseController::class, 'is_authorised']);
