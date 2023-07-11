@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Donation;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -111,48 +112,61 @@ class FoodDonationsController extends Controller
     //Returns all active donation list
     public function donation_list()
     {
-        $donations_list=Array();
+        $donations_list = [];
         $donations = Donation::get();
-        foreach($donations as $donation){
-            $temp=Array();
-            //Get user details
-            $user=$this->get_user_details_by_userid($donation['Created_by']);
-            // if($user['user_status']!='deactived' and $donation['status']=='active'){
-            // $user=$this->get_user_details_by_userid($donation['Created_by']);{
-                
-            $user_status = $user['user_status'] ?? 'default_status'; // replace 'default_status' with whatever you want the default to be
-            if($user_status !='deactived' and $donation['status']=='active'){
-                if(is_array($user) and count($user)>0){
-                    $temp['userid']=$user['user_id'];
-                    $temp['username']=$user['user_name'];
-                    $temp['verified']=$user['is_verified'];
-                }
-                $temp['id']=$donation['id'];
-                $temp['number_of_plates']=$donation['number_of_plates'];
-                $temp['location']=ucfirst($donation['location']);
-                $temp['delivery_status']=ucfirst($donation['delivery_status']);
-                $temp['price']=number_format($donation['price'],2);
-                $temp['expiry_in_days']=$donation['expiry_in_days']." Days";
-                $temp['food_type']=ucfirst($donation['food_type']);
-                $temp['event_name']=ucfirst($donation['event_name']);
-                $temp['description']=ucfirst($donation['description']);
-                $temp['prepared_date']=date_format(date_create($donation['prepared_date']),'d-m-Y');
-                $temp['created_at']=date_format(date_create($donation['created_at']),'d-m-Y');
-                $temp['country']=ucfirst($donation['country']);
-                $temp['state']=ucfirst($donation['state']);
-                $temp['city']=ucfirst($donation['city']);
-                $temp['pincode']=$donation['pincode'];
     
-                array_push($donations_list,$temp);
+        foreach ($donations as $donation) {
+            $temp = [];
+            $user = $this->get_user_details_by_userid($donation['Created_by']);
+            $user_status = $user['user_status'] ?? 'default_status';
+    
+            if ($user_status != 'deactived' && $donation['status'] == 'active') {
+                if (is_array($user) && count($user) > 0) {
+                    $temp['userid'] = $user['user_id'];
+                    $temp['username'] = $user['user_name'];
+                    $temp['verified'] = $user['is_verified'];
+                }
+                $temp['id'] = $donation['id'];
+                $temp['number_of_plates'] = $donation['number_of_plates'];
+                $temp['location'] = ucfirst($donation['location']);
+                $temp['delivery_status'] = ucfirst($donation['delivery_status']);
+                $temp['price'] = number_format($donation['price'], 2);
+                $temp['expiry_in_days'] = $donation['expiry_in_days'] . " Days";
+                $temp['food_type'] = ucfirst($donation['food_type']);
+                $temp['event_name'] = ucfirst($donation['event_name']);
+                $temp['description'] = ucfirst($donation['description']);
+                $temp['prepared_date'] = date_format(date_create($donation['prepared_date']), 'd-m-Y');
+                $temp['created_at'] = date_format(date_create($donation['created_at']), 'd-m-Y');
+                $temp['country'] = ucfirst($donation['country']);
+                $temp['state'] = ucfirst($donation['state']);
+                $temp['city'] = ucfirst($donation['city']);
+                $temp['pincode'] = $donation['pincode'];
+    
+                $purchase = Purchase::where('donation_id', $donation['id'])
+                    ->where('Created_by', $user['user_id'])
+                    ->whereIn('status', ['pending', 'cancelled'])
+                    ->first();
+    
+                if ($purchase) {
+                    if ($purchase->status == 'cancelled') {
+                        $temp['buttonStatus'] = 'cancel';
+                    } else {
+                        $temp['buttonStatus'] = 'request';
+                    }
+                } else {
+                    $temp['buttonStatus'] = 'request';
+                }
+    
+                array_push($donations_list, $temp);
             }
-        }
-        if (count($donations_list)<=0) {
-            return response()->json(['message' => 'Donation not found'], 404);
         }
     
         return response()->json(['donation' => $donations_list], 200);
     }
     
+
+    
+
     public function show($id)
     {
         $donation = Donation::find($id);

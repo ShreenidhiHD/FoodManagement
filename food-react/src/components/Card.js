@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -23,10 +23,10 @@ const RequestButton = styled(Button)`
 `;
 
 const RecipeReviewCard = ({ item }) => {
-  const [requested, setRequested] = useState(false); // state to keep track of request status
-  const [message, setMessage] = useState(''); // state to handle message
-  const [messageType, setMessageType] = useState(''); // state to handle messageType
-  
+  const [requested, setRequested] = useState(item.buttonStatus === 'request');
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
+
   const handleRequestClick = async () => {
     try {
       const authToken = localStorage.getItem('authToken');
@@ -34,12 +34,12 @@ const RecipeReviewCard = ({ item }) => {
         // Handle unauthenticated state
         return;
       }
-      
+
       const requestedData = {
         donation_id: item.id,
         description: 'Your description check',
       };
-      
+
       try {
         const response = await axios.post(
           'http://localhost:8000/api/purchase/requests',
@@ -50,8 +50,8 @@ const RecipeReviewCard = ({ item }) => {
             },
           }
         );
-        
-        setRequested(true); // change button to 'Cancel'
+
+        setRequested(true);
         setMessage(response.data.message);
         setMessageType('success');
         console.log(item.id);
@@ -60,8 +60,7 @@ const RecipeReviewCard = ({ item }) => {
         setMessage('Request failed');
         setMessageType('error');
       }
-      
-      // Clear the message after 3 seconds
+
       setTimeout(() => {
         setMessage('');
         setMessageType('');
@@ -73,18 +72,17 @@ const RecipeReviewCard = ({ item }) => {
       } else {
         errorMessage = error.response.data.message;
       }
-      
+
       setMessage(errorMessage);
       setMessageType('error');
-      
-      // Clear the message after 3 seconds
+
       setTimeout(() => {
         setMessage('');
         setMessageType('');
       }, 3000);
     }
   };
-  
+
   const handleCancelClick = () => {
     try {
       const authToken = localStorage.getItem('authToken');
@@ -92,7 +90,7 @@ const RecipeReviewCard = ({ item }) => {
         // Handle unauthenticated state
         return;
       }
-  
+
       axios
         .get(`http://localhost:8000/api/purchase/requests/cancel/${item.id}`, {
           headers: {
@@ -100,7 +98,7 @@ const RecipeReviewCard = ({ item }) => {
           },
         })
         .then(response => {
-          setRequested(false); // change button back to 'Request'
+          setRequested(false);
           setMessage(response.data.message);
           setMessageType('success');
           console.log(item.id);
@@ -110,8 +108,7 @@ const RecipeReviewCard = ({ item }) => {
           setMessage('Cancellation failed');
           setMessageType('error');
         });
-  
-      // Clear the message after 3 seconds
+
       setTimeout(() => {
         setMessage('');
         setMessageType('');
@@ -120,16 +117,13 @@ const RecipeReviewCard = ({ item }) => {
       console.error(error);
       setMessage('Cancellation failed');
       setMessageType('error');
-  
-      // Clear the message after 3 seconds
+
       setTimeout(() => {
         setMessage('');
         setMessageType('');
       }, 3000);
     }
   };
-  
-  
 
   return (
     <Card>
@@ -167,8 +161,7 @@ const RecipeReviewCard = ({ item }) => {
           aria-label="share"
           style={{ marginRight: '10px' }}
           onClick={() => window.open(item.shareableLink, '_blank')}
-        ></IconButton>
-        <IconButton aria-label="share">
+        >
           <ShareIcon />
         </IconButton>
       </CardActions>
