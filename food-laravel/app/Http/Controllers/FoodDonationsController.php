@@ -116,7 +116,7 @@ class FoodDonationsController extends Controller
         foreach($donations as $donation){
             $temp=Array();
             //Get user details
-            // $user=$this->get_user_details_by_userid($donation['Created_by']);
+            $user=$this->get_user_details_by_userid($donation['Created_by']);
             // if($user['user_status']!='deactived' and $donation['status']=='active'){
             // $user=$this->get_user_details_by_userid($donation['Created_by']);{
                 
