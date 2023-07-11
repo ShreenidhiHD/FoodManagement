@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -11,6 +11,8 @@ import { red } from '@mui/material/colors';
 import Button from '@mui/material/Button';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShareIcon from '@mui/icons-material/Share';
+import Alert from '@mui/material/Alert';
+import axios from 'axios';
 
 const RequestButton = styled(Button)`
   color: white;
@@ -21,9 +23,44 @@ const RequestButton = styled(Button)`
 `;
 
 const RecipeReviewCard = ({ item }) => {
-
+  const [requested, setRequested] = useState(false); // state to keep track of request status
+  const [message, setMessage] = useState(''); // state to handle message
+  const [messageType, setMessageType] = useState(''); // state to handle messageType
   const handleRequestClick = () => {
-    // Handle the request click action
+    axios.post('http://localhost:8000/api/purchase/create', { donation_id: item.id, description: 'Your description' })
+      .then(response => {
+        setRequested(true); // change button to 'Cancel'
+        setMessage(response.data.message);
+        setMessageType('success');
+      })
+      .catch(error => {
+        console.error(error);
+        setMessage('Request failed');
+        setMessageType('error');
+      });
+    // Clear the message after 3 seconds
+    setTimeout(() => {
+      setMessage('');
+      setMessageType('');
+    }, 3000);
+  };
+  const handleCancelClick = () => {
+    axios.delete(`http://localhost:8000/api/purchase/cancel/${item.id}`)
+      .then(response => {
+        setRequested(false); // change button back to 'Request'
+        setMessage(response.data.message);
+        setMessageType('success');
+      })
+      .catch(error => {
+        console.error(error);
+        setMessage('Cancellation failed');
+        setMessageType('error');
+      });
+    // Clear the message after 3 seconds
+    setTimeout(() => {
+      setMessage('');
+      setMessageType('');
+    }, 3000);
   };
 
   return (
@@ -53,12 +90,21 @@ const RecipeReviewCard = ({ item }) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
+      {requested ? (
+        <RequestButton onClick={handleCancelClick}>Cancel</RequestButton>
+      ) : (
         <RequestButton onClick={handleRequestClick}>Request</RequestButton>
+      )}
         <IconButton aria-label="share" style={{ marginRight: '10px' }} onClick={() => window.open(item.shareableLink, '_blank')}></IconButton>
         <IconButton aria-label="share">
             <ShareIcon />
         </IconButton>
-      </CardActions>
+        </CardActions>
+          {message && (
+            <Alert severity={messageType}>
+              {message}
+            </Alert>
+          )}
     </Card>
   );
 };

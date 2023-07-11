@@ -1,14 +1,10 @@
 import { Grid, Card, CardContent, TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import { format } from 'date-fns';
 
 function DonateFood() {
-    
-    const navigate = useNavigate();
-    
     const [numberOfPlates, setNumberOfPlates] = useState('');
     const [location, setLocation] = useState('');
     const [deliveryStatus, setDeliveryStatus] = useState('');
