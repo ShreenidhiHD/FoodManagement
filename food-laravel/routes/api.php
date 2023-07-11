@@ -35,6 +35,8 @@ Route::middleware('auth:sanctum')->post('addfood', [FoodDonationsController::cla
 Route::middleware('auth:sanctum')->get('/user-donations', [FoodDonationsController::class, 'userDonations']);
 Route::get('/donations/{id}', [FoodDonationsController::class, 'show'])->middleware('auth:sanctum');
 Route::put('/donations/{id}', [FoodDonationsController::class, 'update'])->middleware('auth:sanctum');
+Route::post('/purchase/requests', [PurchaseController::class, 'create'])->middleware('auth:sanctum');
+Route::get('/purchase/requests/cancel/{id}', [PurchaseController::class, 'deletes'])->middleware('auth:sanctum');
 // Route to fetch application settings
 Route::get('/settings', [SettingsController::class, 'getSettings']);
 Route::get('/unittest', [FoodDonationsController::class, 'donation_list']);

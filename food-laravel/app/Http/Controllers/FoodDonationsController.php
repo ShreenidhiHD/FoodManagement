@@ -117,7 +117,11 @@ class FoodDonationsController extends Controller
             $temp=Array();
             //Get user details
             $user=$this->get_user_details_by_userid($donation['Created_by']);
-            if($user['user_status']!='deactived' and $donation['status']=='active'){
+            // if($user['user_status']!='deactived' and $donation['status']=='active'){
+            // $user=$this->get_user_details_by_userid($donation['Created_by']);{
+                
+            $user_status = $user['user_status'] ?? 'default_status'; // replace 'default_status' with whatever you want the default to be
+            if($user_status !='deactived' and $donation['status']=='active'){
                 if(is_array($user) and count($user)>0){
                     $temp['userid']=$user['user_id'];
                     $temp['username']=$user['user_name'];
@@ -209,4 +213,3 @@ class FoodDonationsController extends Controller
     }
     
 }
-
