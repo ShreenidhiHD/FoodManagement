@@ -6,15 +6,68 @@ use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Auth;
 
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Purchase;
+use App\Models\Donation;
+use Illuminate\Support\Facades\Auth;
+
 class PurchaseController extends Controller
 {
+<<<<<<< HEAD
     //Check if user is authorised to perform operations
     function is_authorised(){
         return Auth::guard('sanctum')->user();
+=======
+    // //Check if user is authorised to perform operations
+    // function is_authorised(){
+    //     $user = $request->user();
+    // }
+
+    // //CRUD Operations
+    // function create(Request $request){
+        
+    // }
+
+    // function read(){}
+
+    // function update(Request $request){}
+
+    // function delete($id){}
+
+    
+    // Check if user is authorised to perform operations
+    public function is_authorised(Request $request) {
+        $user = $request->user();
+>>>>>>> f271d206b88b5bd831c8e8ab33b8b8cdd51e1107
     }
 
-    //CRUD Operations
+    // Function to handle purchase creation
+    public function createPurchase(Request $request) {
+        $user = $request->user();
+        $purchase = new Purchase;
+        $purchase->donation_id = $request->donation_id;
+        $purchase->Crated_by = $user->id;
+        $purchase->status = 'pending';
+        $purchase->description = $request->description;
+        $purchase->save();
+
+        return response()->json(['message' => 'Request successful'], 200);
+    }
+
+    // Function to handle purchase cancellation
+    public function cancelPurchase(Request $request, $id) {
+        $purchase = Purchase::findOrFail($id);
+        $purchase->status = 'cancelled';
+        $purchase->save();
+
+        return response()->json(['message' => 'Purchase cancelled'], 200);
+    }
+    
+    // CRUD Operations
     function create(Request $request){
+<<<<<<< HEAD
         if(!$this->is_authorised()){
             return response()->json(['message' => 'User not authenticated'], 401);
         }
@@ -33,6 +86,10 @@ class PurchaseController extends Controller
             'message' => 'Food donation created successfully.',
             'donation' => $request_status, // Optional: Include the created purchase in the response
         ], 200);
+=======
+        $this->is_authorised($request);
+        $this->createPurchase($request);
+>>>>>>> f271d206b88b5bd831c8e8ab33b8b8cdd51e1107
     }
 
     function read($id){
@@ -53,6 +110,7 @@ class PurchaseController extends Controller
             ['field' => 'requested_at', 'headerName' => 'Request Time']
         ];
 
+<<<<<<< HEAD
         //Fetch data from purchases table
         $purchases=DB::table('purchases')->where('donation_id',$id)->get();
 
@@ -123,5 +181,10 @@ class PurchaseController extends Controller
         }
 
         return response()->json(['message' => 'Unable to delete request'], 401);
+=======
+    function delete(Request $request, $id){
+        $this->is_authorised($request);
+        $this->cancelPurchase($request, $id);
+>>>>>>> f271d206b88b5bd831c8e8ab33b8b8cdd51e1107
     }
 }
