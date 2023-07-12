@@ -49,26 +49,47 @@ class PurchaseController extends Controller
     }
 
     // Function to handle purchase cancellation
-    public function cancelPurchase(Request $request, $id)
+    // public function cancelPurchase(Request $request, $id)
+    // {
+    //     $purchase = Purchase::where('id', $id)
+    //         ->where('Created_by', Auth::id())
+    //         ->first();
+
+    //     if (!$purchase) {
+    //         return response()->json(['message' => 'Purchase not found'], 404);
+    //     }
+
+    //     if ($purchase->status == 'cancelled') {
+    //         return response()->json(['message' => 'Purchase already cancelled'], 200);
+    //     }
+
+    //     $purchase->status = 'cancelled';
+    //     $purchase->save();
+
+    //     return response()->json(['message' => 'Purchase cancelled'], 200);
+    // }
+    
+    public function cancelPurchase(Request $request, $donationId)
     {
-        $purchase = Purchase::where('id', $id)
+        $purchase = Purchase::where('donation_id', $donationId)
             ->where('Created_by', Auth::id())
             ->first();
-
+    
         if (!$purchase) {
             return response()->json(['message' => 'Purchase not found'], 404);
         }
-
+    
         if ($purchase->status == 'cancelled') {
             return response()->json(['message' => 'Purchase already cancelled'], 200);
         }
-
+    
         $purchase->status = 'cancelled';
         $purchase->save();
-
+    
         return response()->json(['message' => 'Purchase cancelled'], 200);
     }
     
+
     // CRUD Operations
     function create(Request $request){
         $this->is_authorised($request);

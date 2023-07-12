@@ -110,7 +110,7 @@ class FoodDonationsController extends Controller
     }
 
     //Returns all active donation list
-    public function donation_list()
+    public function donation_list(Request $request)
     {
         $donations_list = [];
         $donations = Donation::get();
@@ -143,9 +143,10 @@ class FoodDonationsController extends Controller
                 $temp['pincode'] = $donation['pincode'];
     
                 $purchase = Purchase::where('donation_id', $donation['id'])
-                    ->where('Created_by', $user['user_id'])
-                    ->whereIn('status', ['pending', 'cancelled'])
-                    ->first();
+                ->where('Created_by', auth()->id())
+                ->whereIn('status', ['pending', 'cancelled'])
+                ->first();
+
     
                 if ($purchase) {
                     if ($purchase->status == 'cancelled') {
@@ -154,7 +155,7 @@ class FoodDonationsController extends Controller
                         $temp['buttonStatus'] = 'request';
                     }
                 } else {
-                    $temp['buttonStatus'] = 'request';
+                    $temp['buttonStatus'] = 'request no entry';
                 }
     
                 array_push($donations_list, $temp);
