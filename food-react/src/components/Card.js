@@ -210,16 +210,28 @@ const RecipeReviewCard = ({ item }) => {
             )}
           </>
         )}
-        <IconButton
-          aria-label="share"
-          style={{ marginRight: '10px' }}
-          onClick={() => {
-            // Your sharing logic here...
-          }}
-        >
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
+        
+  <IconButton
+  aria-label="share"
+  style={{ marginRight: '10px' }}
+  onClick={() => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Share Donation',
+        text: 'Check out this donation!',
+        url: item.shareableLink,
+      })
+      .then(() => console.log('Successful share'))
+      .catch((error) => console.log('Error sharing', error));
+    } else {
+      alert(`Share this link: ${item.shareableLink}`);
+    }
+  }}
+>
+  <ShareIcon />
+</IconButton>
+
+</CardActions>
 
       {message && (
         <Alert severity={messageType}>
