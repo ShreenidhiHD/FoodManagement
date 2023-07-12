@@ -152,19 +152,28 @@ const RecipeReviewCard = ({ item }) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        {requested ? (
-          <RequestButton onClick={handleCancelClick}>Cancel</RequestButton>
-        ) : (
-          <RequestButton onClick={handleRequestClick}>Request</RequestButton>
-        )}
-        <IconButton
-          aria-label="share"
-          style={{ marginRight: '10px' }}
-          onClick={() => window.open(item.shareableLink, '_blank')}
-        >
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
+  {item.buttonStatus === 'donater' ? (
+    <Typography variant="body1" color="text.primary">
+      Thanks for donating
+    </Typography>
+  ) : (
+    <>
+      {item.buttonStatus === 'cancel' ? (
+        <RequestButton onClick={handleCancelClick}>Cancel</RequestButton>
+      ) : (
+        <RequestButton onClick={handleRequestClick}>Request</RequestButton>
+      )}
+    </>
+  )}
+  <IconButton
+    aria-label="share"
+    style={{ marginRight: '10px' }}
+    onClick={() => window.open(item.shareableLink, '_blank')}
+  >
+    <ShareIcon />
+  </IconButton>
+</CardActions>
+
       {message && (
         <Alert severity={messageType}>
           {message}
