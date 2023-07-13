@@ -15,6 +15,7 @@ import Dashboard from './pages/User/Dashboard';
 import SettingsProvider from './server/SettingsProvider';
 import UserDonations from './pages/User/UserDonations';
 import ViewDonation from './pages/User/ViewDonation';
+import UserPurchases from './pages/User/UserPurchases';
 
 
 // The App component wraps the entire application and sets up routing for all pages.
@@ -38,6 +39,7 @@ function App() {
             <Route path="/donatefood" element={<AuthenticatedRoute><DonateFood /></AuthenticatedRoute>} />
             <Route path="/dashboard" element={<AuthenticatedRoute><Dashboard /></AuthenticatedRoute>} />
             <Route path="/userdonations" element={<AuthenticatedRoute><UserDonations /></AuthenticatedRoute>} />
+            <Route path="/userpurchases" element={<AuthenticatedRoute><UserPurchases /></AuthenticatedRoute>} />
             <Route path="/donations/:id" element={<AuthenticatedRoute><ViewDonation /></AuthenticatedRoute>} />
           </Routes>
         </div>
