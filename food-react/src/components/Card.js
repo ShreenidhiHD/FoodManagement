@@ -15,7 +15,12 @@ import Alert from '@mui/material/Alert';
 import axios from 'axios';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
 
 const RequestButton = styled(Button)`
   color: white;
@@ -31,9 +36,18 @@ const RecipeReviewCard = ({ item }) => {
   const [messageType, setMessageType] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [buttonStatus, setButtonStatus] = useState(item.buttonStatus);
-
+  const [openDialog, setOpenDialog] = useState(false);
+  const [description, setDescription] = useState('');
 
   const handleRequestClick = async () => {
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
+  const handleConfirmRequest = async () => {
     try {
       const authToken = localStorage.getItem('authToken');
       if (!authToken) {
@@ -43,7 +57,7 @@ const RecipeReviewCard = ({ item }) => {
 
       const requestedData = {
         donation_id: item.id,
-        description: 'Your description check',
+        description: description, // use user input instead of hardcoded string
       };
 
       try {
@@ -62,6 +76,8 @@ const RecipeReviewCard = ({ item }) => {
         setMessageType('success');
         setButtonStatus('cancel');
         console.log(item.id);
+        handleDialogClose();
+
       } catch (error) {
         console.error(error);
         setMessage('Request failed');
@@ -135,6 +151,37 @@ const RecipeReviewCard = ({ item }) => {
 
   return (
     <Card>
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+      >
+        <DialogTitle>{"Enter your description"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please enter your description below:
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="description"
+            label="Description"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmRequest}>
+            Request
+          </Button>
+        </DialogActions>
+      </Dialog>
       <CardHeader
   avatar={
     <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
