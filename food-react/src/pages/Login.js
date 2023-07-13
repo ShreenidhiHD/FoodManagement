@@ -12,10 +12,9 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Alert from '@mui/material/Alert';
 
-
-
-async function loginUser(email, password) {
+async function loginUser(email, password, setLoginError) {
   try {
     const response = await fetch('http://localhost:8000/api/login', {
       method: 'POST',
@@ -35,41 +34,30 @@ async function loginUser(email, password) {
     localStorage.setItem('authToken', token);
     if (response.status === 201) {
       console.log(`User logged in`);
-       // Redirect to userhome.js
-       window.location.href = 'UserHome';
+      // Redirect to userhome.js
+      window.location.href = 'UserHome';
     }
     
   } catch (error) {
     console.error('Error during login:', error);
+    setLoginError(true);
+    setTimeout(() => {
+      setLoginError(false);
+    }, 5000); // Remove error message after 5 seconds
   }
 }
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
-const defaultTheme = createTheme();
 
 export default function SignInSide() {
+  const [loginError, setLoginError] = React.useState(false);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    loginUser(data.get('email'), data.get('password'));
+    loginUser(data.get('email'), data.get('password'), setLoginError);
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-     
+    <ThemeProvider theme={createTheme()}>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
@@ -102,6 +90,11 @@ export default function SignInSide() {
             <Typography component="h1" variant="h5">
               Log in
             </Typography>
+            {loginError && (
+              <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+                The provided credentials are incorrect.
+              </Alert>
+            )}
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
@@ -147,7 +140,6 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
               </Grid>
-              <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>
         </Grid>

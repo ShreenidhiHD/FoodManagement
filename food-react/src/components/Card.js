@@ -13,6 +13,9 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShareIcon from '@mui/icons-material/Share';
 import Alert from '@mui/material/Alert';
 import axios from 'axios';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+
 
 const RequestButton = styled(Button)`
   color: white;
@@ -26,6 +29,9 @@ const RecipeReviewCard = ({ item }) => {
   const [requested, setRequested] = useState(item.buttonStatus === 'request');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [buttonStatus, setButtonStatus] = useState(item.buttonStatus);
+
 
   const handleRequestClick = async () => {
     try {
@@ -54,6 +60,7 @@ const RecipeReviewCard = ({ item }) => {
         setRequested(true);
         setMessage(response.data.message);
         setMessageType('success');
+        setButtonStatus('cancel');
         console.log(item.id);
       } catch (error) {
         console.error(error);
@@ -102,6 +109,7 @@ const RecipeReviewCard = ({ item }) => {
           setMessage(response.data.message);
           setMessageType('success');
           console.log(item.id);
+          setButtonStatus('request');
         })
         .catch(error => {
           console.error(error);
@@ -128,19 +136,56 @@ const RecipeReviewCard = ({ item }) => {
   return (
     <Card>
       <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title={`Created by: ${item.username}`}
-        subheader={item.prepared_date}
-      />
+  avatar={
+    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+      R
+    </Avatar>
+  }
+  action={
+    <>
+      <IconButton 
+        aria-label="settings"
+        onClick={(event) => setAnchorEl(event.currentTarget)}
+      >
+        <MoreVertIcon />
+      </IconButton>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+      >
+        <MenuItem onClick={() => {
+          setAnchorEl(null);
+          // Here you can put the same code used in share button click handler
+          if (navigator.share) {
+            navigator.share({
+              title: 'Share Donation',
+              text: 'Check out this donation!',
+              url: item.shareableLink,
+            })
+            .then(() => console.log('Successful share'))
+            .catch((error) => console.log('Error sharing', error));
+          } else {
+            alert(`Share this link: ${item.shareableLink}`);
+          }
+        }}>
+          Share
+        </MenuItem>
+        <MenuItem onClick={() => {
+          setAnchorEl(null);
+          window.location.href = `mailto:?subject=I want to report this donation&body=Check out this donation: ${item.shareableLink}`;
+        }}>
+          Report
+        </MenuItem>
+      </Menu>
+    </>
+  }
+  title={`Created by: ${item.username}`}
+  subheader={item.prepared_date}
+/>
+
       <Typography variant="subtitle2" color="text.secondary" align="right">
         {item.verified ? 'verified' : ''}
       </Typography>
@@ -152,19 +197,42 @@ const RecipeReviewCard = ({ item }) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        {requested ? (
-          <RequestButton onClick={handleCancelClick}>Cancel</RequestButton>
+        {buttonStatus === 'donater' ? (
+          <Typography variant="body1" color="text.primary">
+            Thanks for donating
+          </Typography>
         ) : (
-          <RequestButton onClick={handleRequestClick}>Request</RequestButton>
+          <>
+            {buttonStatus === 'cancel' ? (
+              <RequestButton onClick={handleCancelClick}>Cancel</RequestButton>
+            ) : (
+              <RequestButton onClick={handleRequestClick}>Request</RequestButton>
+            )}
+          </>
         )}
-        <IconButton
-          aria-label="share"
-          style={{ marginRight: '10px' }}
-          onClick={() => window.open(item.shareableLink, '_blank')}
-        >
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
+        
+  <IconButton
+  aria-label="share"
+  style={{ marginRight: '10px' }}
+  onClick={() => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Share Donation',
+        text: 'Check out this donation!',
+        url: item.shareableLink,
+      })
+      .then(() => console.log('Successful share'))
+      .catch((error) => console.log('Error sharing', error));
+    } else {
+      alert(`Share this link: ${item.shareableLink}`);
+    }
+  }}
+>
+  <ShareIcon />
+</IconButton>
+
+</CardActions>
+
       {message && (
         <Alert severity={messageType}>
           {message}
