@@ -33,8 +33,18 @@ const ViewRequests = () => {
       console.log(response.data); // Check the response data
 
       if (response.data.message === "Purchase cancelled") {
-        toast.success(`Cancellation of "${item.event_name}" successful`);
-        setRows((prevRows) => prevRows.filter((row) => row.donation_id !== item.donation_id));
+        const rowIndex = rows.findIndex(row => row.id === item.id);
+
+      // Create a new array for the updated rows
+      const newRows = [...rows];
+
+      // Update the status of the item to "Rejected"
+      newRows[rowIndex] = {...newRows[rowIndex], status: 'Rejected'};
+
+      // Set the newRows array as the new rows state
+      setRows(newRows);
+        toast.success(`Cancellation of "${item.created_by}" successful`);
+       
       } else {
         toast.error(response.data.message || 'Cancellation failed');
       }
@@ -78,7 +88,11 @@ const ViewRequests = () => {
         </Button>
         
       );
-    } else {
+    }
+    else if (row.status === 'Rejected') {
+        return 'Rejected'; // This returns the text 'Rejected'
+      } 
+       else {
       return null;
     }
     
@@ -91,6 +105,7 @@ const ViewRequests = () => {
             <DataTable columns={columns} rows={rows} actionButton={actionButton} />
         </CardContent>
       </Card>
+      <ToastContainer position="top-center" />
     </Container>
   );
 };
