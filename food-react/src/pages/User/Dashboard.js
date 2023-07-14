@@ -68,7 +68,7 @@ const DashboardPage = () => {
               </Typography>
               <Button
                 component={Link}
-                to="/mypurchases"
+                to="/UserPurchases"
                 variant="contained"
                 fullWidth
                 sx={{ bgcolor: '#4CAF50', color: '#FFF' }}
@@ -100,7 +100,7 @@ const DashboardPage = () => {
               </Typography>
               <Button
                 component={Link}
-                to="/myrequests"
+                to="/UserRequests"
                 variant="contained"
                 fullWidth
                 sx={{ bgcolor: '#2196F3', color: '#FFF' }}

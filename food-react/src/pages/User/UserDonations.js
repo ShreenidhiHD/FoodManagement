@@ -2,6 +2,8 @@ import DataTable from '../../components/DataTable';
 import React, { useState, useEffect } from 'react';
 import { Container, Card, CardContent } from '@mui/material';
 import axios from 'axios';
+import { Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const UserDonations = () => {
   const [columns, setColumns] = useState([]);
@@ -31,13 +33,18 @@ const UserDonations = () => {
       console.error('Error fetching data:', error);
     }
   };
-
+  const actionButton = (row) => {
+      return <Button variant="contained" size="small" component={Link} to={`/donations/${row.id}`}>
+        View
+      </Button>
+    
+  }
   return (
     <Container sx={{ marginTop: '2rem' }}>
       <Card>
         <CardContent>
             <h1 className='text-center'>My Donations</h1>
-          <DataTable columns={columns} rows={rows} detailPageLink={id => `/donations/${id}`} />
+            <DataTable columns={columns} rows={rows} actionButton={actionButton} />
         </CardContent>
       </Card>
     </Container>
