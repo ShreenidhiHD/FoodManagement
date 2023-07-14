@@ -67,6 +67,8 @@ class PurchaseController extends Controller
             $requested_by="";
             $whatsapp="";
             $requested_user=DB::table('users')->where('id',$requst->Created_by)->first();
+            $requested_by=$requested_user->name;
+            $whatsapp=$requested_user->whatsapp;
             return [
                 'id' => $requst->id,
                 'donation_id' => $requst->donation_id,
@@ -74,7 +76,7 @@ class PurchaseController extends Controller
                 'contact'=>$whatsapp,
                 'status' => ucfirst($requst->status),
                 'description'=>ucfirst($requst->description),
-                'cerated_at'=>date_format(date_create($requst->created_at),'d-m-Y h:m:s a'),
+                'created_at'=>date_format(date_create($requst->created_at),'d-m-Y h:m:s a'),
             ];
         });
     
