@@ -128,6 +128,24 @@ class PurchaseController extends Controller
         return response()->json(['message' => 'Purchase cancelled'], 200);
     }
     
+    public function cancelRequest(Request $request, $id)
+    {
+        $purchase = Purchase::where('id', $id)
+            ->first();
+    
+        if (!$purchase) {
+            return response()->json(['message' => 'Purchase not found'], 404);
+        }
+    
+        if ($purchase->status == 'cancelled') {
+            return response()->json(['message' => 'Purchase already cancelled'], 200);
+        }
+    
+        $purchase->status = 'cancelled';
+        $purchase->save();
+    
+        return response()->json(['message' => 'Purchase cancelled'], 200);
+    }
 
     // CRUD Operations
     function create(Request $request){

@@ -24,7 +24,7 @@ const ViewRequests = () => {
         return;
       }
 
-      const response = await axios.get(`http://localhost:8000/api/purchase/requests/cancel/${item.donation_id}`, {
+      const response = await axios.get(`http://localhost:8000/api/purchase/requests_cancel/${item.id}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
