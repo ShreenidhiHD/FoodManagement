@@ -43,6 +43,48 @@ class PurchaseController extends Controller
         }
     }
 
+    public function user_donation_request(Request $request,$id){
+        $user = Auth::guard('sanctum')->user();
+
+        if(!$user){
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+
+        // Structure the data as needed for the frontend
+        $columns = [
+            ['field' => 'id', 'headerName' => 'ID'],
+            ['field' => 'donation_id', 'headerName' => 'Donation ID'],
+            ['field' => 'created_by', 'headerName' => 'Created By'],
+            ['field' => 'contact', 'headerName' => 'WhatsApp'],
+            ['field' => 'status', 'headerName' => 'Status'],
+            ['field' => 'description', 'headerName' => 'Description'],
+            ['field' => 'created_at', 'headerName' => 'Requested at']
+        ];
+
+        $requests=DB::table('purchases')->where('donation_id',$id)->get();
+
+        $rows = $requests->map(function($requst) {
+            $requested_by="";
+            $whatsapp="";
+            $requested_user=DB::table('users')->where('id',$requst->Created_by)->first();
+            return [
+                'id' => $requst->id,
+                'donation_id' => $requst->donation_id,
+                'created_by' => ucfirst($requested_by),
+                'contact'=>$whatsapp,
+                'status' => ucfirst($requst->status),
+                'description'=>ucfirst($requst->description),
+                'cerated_at'=>date_format(date_create($requst->created_at),'d-m-Y h:m:s a'),
+            ];
+        });
+    
+        return response()->json([
+            'columns' => $columns,
+            'rows' => $rows
+        ]);
+
+    }
+
     // Function to handle purchase cancellation
     // public function cancelPurchase(Request $request, $id)
     // {
