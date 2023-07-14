@@ -6,12 +6,14 @@ import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
 
 const ViewRequests = () => {
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
-  const { id } = useParams(); 
-
+  const { id ,eventname } = useParams(); 
+  
+ 
   useEffect(() => {
     fetchData();
   }, []);
@@ -32,7 +34,7 @@ const ViewRequests = () => {
   
       console.log(response.data); // Check the response data
   
-      if (response.data.message === "Purchase accepted") {
+      if (response.data.message === "Purchase request accepted") {
         // Find the index of the item in the rows array
         const rowIndex = rows.findIndex(row => row.id === item.id);
   
@@ -54,7 +56,7 @@ const ViewRequests = () => {
       toast.error('Acceptance failed');
     }
   };
-  
+  console.log(eventname);
   const handleCancelClick = async (item) => {
     console.log(item.donation_id);
     try {
@@ -112,6 +114,7 @@ const ViewRequests = () => {
       console.error('Error fetching data:', error);
     }
   };
+  
   const actionButton = (row) => {
     if (row.status === 'Pending') {
       return (
@@ -143,17 +146,19 @@ const ViewRequests = () => {
       );
     } else if (row.status === 'Rejected') {
       return 'Rejected';
+    } else if (row.status === 'Accepted') {
+      return 'Accepted';
     } else {
       return null;
     }
-    
-    
   }
+  
   return (
     <Container sx={{ marginTop: '2rem' }}>
       <Card>
         <CardContent>
-            <h1 className='text-center'>My Donations</h1>
+            
+            <h1 className='text-center'>{eventname}</h1>
             <DataTable columns={columns} rows={rows} actionButton={actionButton} />
         </CardContent>
       </Card>

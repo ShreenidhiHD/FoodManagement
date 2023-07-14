@@ -46,7 +46,7 @@ function App() {
             <Route path="/userrequests" element={<AuthenticatedRoute><UserRequests/></AuthenticatedRoute>} />
             <Route path="/userdonationrequests" element={<AuthenticatedRoute><Userdonationrequests/></AuthenticatedRoute>} />
             <Route path="/donations/:id" element={<AuthenticatedRoute><ViewDonation /></AuthenticatedRoute>} />
-            <Route path="/donations/requests/:id" element={<AuthenticatedRoute><ViewRequests /></AuthenticatedRoute>} />
+            <Route path="/donations/requests/:id/:eventname" element={<AuthenticatedRoute><ViewRequests /></AuthenticatedRoute>} />
             
           </Routes>
         </div>
