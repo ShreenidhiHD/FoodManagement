@@ -15,6 +15,46 @@ const ViewRequests = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleAcceptClick = async (item) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        // Handle unauthenticated state
+        return;
+      }
+  
+      const response = await axios.get(`http://localhost:8000/api/purchase/requests_accept/${item.id}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+  
+      console.log(response.data); // Check the response data
+  
+      if (response.data.message === "Purchase accepted") {
+        // Find the index of the item in the rows array
+        const rowIndex = rows.findIndex(row => row.id === item.id);
+  
+        // Create a new array for the updated rows
+        const newRows = [...rows];
+  
+        // Update the status of the item to "Accepted"
+        newRows[rowIndex] = {...newRows[rowIndex], status: 'Accepted'};
+  
+        // Set the newRows array as the new rows state
+        setRows(newRows);
+  
+        toast.success(`The request made by "${item.created_by}" was successfully accepted.`);
+      } else {
+        toast.error(response.data.message || 'Acceptance failed');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Acceptance failed');
+    }
+  };
+  
   const handleCancelClick = async (item) => {
     console.log(item.donation_id);
     try {
@@ -43,8 +83,7 @@ const ViewRequests = () => {
 
       // Set the newRows array as the new rows state
       setRows(newRows);
-        toast.success(`Cancellation of "${item.created_by}" successful`);
-       
+        toast.success(`The request made by "${item.created_by}" was successfully rejected.`);
       } else {
         toast.error(response.data.message || 'Cancellation failed');
       }
@@ -76,25 +115,38 @@ const ViewRequests = () => {
   const actionButton = (row) => {
     if (row.status === 'Pending') {
       return (
-        <Button variant="contained" size="small" onClick={() => handleCancelClick(row)}>
-          Cancel
-        </Button>
-        
+        <div>
+          <Button 
+            variant="contained" 
+            color="primary"
+            size="small" 
+            style={{ marginRight: '10px' }}
+            onClick={() => handleAcceptClick(row)}
+          >
+            Accept
+          </Button>
+          <Button 
+            variant="contained" 
+            color="secondary"
+            size="small" 
+            onClick={() => handleCancelClick(row)}
+          >
+            Reject
+          </Button>
+        </div>
       );
     } else if (row.status === 'Cancelled') {
       return (
         <Button variant="contained" size="small" component={Link} to={`/request/${row.id}`}>
           Request
         </Button>
-        
       );
-    }
-    else if (row.status === 'Rejected') {
-        return 'Rejected'; // This returns the text 'Rejected'
-      } 
-       else {
+    } else if (row.status === 'Rejected') {
+      return 'Rejected';
+    } else {
       return null;
     }
+    
     
   }
   return (
