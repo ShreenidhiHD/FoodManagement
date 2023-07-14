@@ -11,12 +11,6 @@ import Logout from './Logout';
 import DonateButton from './DonateButton';
 import DashboardButton from './DashboardButton';
 
-// Array of pages to be displayed in the navigation bar
-
-
-// The ResponsiveAppBar component is a responsive navigation bar that provides navigation between different pages of the application. 
-// It also displays the application name fetched from the SettingsContext. 
-// Depending on the user's authentication status, it either displays a logout button and a link to the profile page or login and signup buttons.
 const ResponsiveAppBar = () => {
   const settings = useContext(SettingsContext); // Get settings from SettingsContext
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('authToken') !== null); // Check if the user is logged in
@@ -26,6 +20,7 @@ const ResponsiveAppBar = () => {
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
+
   // Handle logout by setting isLoggedIn state to false
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -39,7 +34,7 @@ const ResponsiveAppBar = () => {
             variant="h6"
             noWrap
             component={RouterLink}
-            to="/"
+            to={isLoggedIn ? "/UserHome" : "/"} // Redirect to UserHome if logged in, otherwise redirect to Home
             sx={{
               flexGrow: 1,
               fontFamily: 'monospace',
