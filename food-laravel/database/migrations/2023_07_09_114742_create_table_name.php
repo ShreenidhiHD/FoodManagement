@@ -17,7 +17,7 @@ class CreateTableName extends Migration
             $table->id();
             $table->integer('donation_id');
             $table->integer('Created_by');
-            $table->enum('status',['pending', 'accepted','rejected','expired','completed','cancelled'])->default('pending');
+            $table->enum('status',['pending', 'accepted','rejected','expired','completed','cancelled','deactivated'])->default('pending');
             $table->string('description', 500);
             $table->timestamps();
         });

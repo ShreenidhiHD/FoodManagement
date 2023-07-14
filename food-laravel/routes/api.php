@@ -40,6 +40,18 @@ Route::get('/purchase/requests/cancel/{id}', [PurchaseController::class, 'delete
 Route::get('/user-purchases', [PurchaseController::class, 'purchase_list'])->middleware('auth:sanctum');
 Route::get('/user-requests', [PurchaseController::class, 'userPendingPurchases'])->middleware('auth:sanctum');
 
+//Admin routes
+Route::get('/users', [adminController::class, 'users'])->middleware('auth:sanctum');
+Route::get('/donations', [adminController::class, 'donations'])->middleware('auth:sanctum');
+Route::get('/purchases_by_donation/{donation_id}', [adminController::class, 'get_purchase_by_donations'])->middleware('auth:sanctum');
+
+Route::get('/user-deactivate/{id}', [adminController::class, 'deactivate_user'])->middleware('auth:sanctum');
+Route::get('/user-activate/{id}', [adminController::class, 'activate_user'])->middleware('auth:sanctum');
+Route::get('/donation-deactivate/{id}', [adminController::class, 'deactivate_donation'])->middleware('auth:sanctum');
+Route::get('/donation-activate/{id}', [adminController::class, 'activate_donation'])->middleware('auth:sanctum');
+Route::get('/purchase-deactivate/{id}', [adminController::class, 'deactivate_purchase'])->middleware('auth:sanctum');
+Route::get('/purchase-activate/{id}', [adminController::class, 'activate_purchase'])->middleware('auth:sanctum');
+
 // Route to fetch application settings
 Route::get('/test/re', [FoodDonationsController::class, 'donation_list'])->middleware('auth:sanctum');
 Route::get('/settings', [SettingsController::class, 'getSettings']);
