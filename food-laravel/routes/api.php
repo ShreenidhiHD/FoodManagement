@@ -41,6 +41,7 @@ Route::get('/user-purchases', [PurchaseController::class, 'purchase_list'])->mid
 Route::get('/user-requests', [PurchaseController::class, 'userPendingPurchases'])->middleware('auth:sanctum');
 Route::get('/donations/requests/{id}', [PurchaseController::class, 'user_donation_request'])->middleware('auth:sanctum');
 Route::get('/purchase/requests_cancel/{id}', [PurchaseController::class, 'cancelRequest'])->middleware('auth:sanctum');
+Route::get('/purchase/requests_accept/{id}', [PurchaseController::class, 'acceptRequest'])->middleware('auth:sanctum');
 
 // Route to fetch application settings
 Route::get('/test/re', [FoodDonationsController::class, 'donation_list'])->middleware('auth:sanctum');

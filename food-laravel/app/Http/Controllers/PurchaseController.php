@@ -151,6 +151,20 @@ class PurchaseController extends Controller
         return response()->json(['message' => 'Purchase cancelled'], 200);
     }
 
+    public function acceptRequest(Request $request, $id)
+    {
+        $purchase = Purchase::where('id', $id)->first();
+    
+        if (!$purchase) {
+            return response()->json(['message' => 'Purchase not found'], 404);
+        }
+    
+        $purchase->status = 'accepted';
+        $purchase->save();
+    
+        return response()->json(['message' => 'Purchase request accepted'], 200);
+    }
+
     // CRUD Operations
     function create(Request $request){
         $this->is_authorised($request);
