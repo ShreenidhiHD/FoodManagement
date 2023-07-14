@@ -80,13 +80,18 @@ class adminController extends Controller
         $rows = $donations->map(function($donation) {
             return [
                 'id' => $donation->id,
-                'number_of_plates' => $donation->id,
-                'delivery_status' => $donation->id,
-                'price' => $donation->event_name,
-                'expiry_in_days' => $donation->event_name,
-                'prepared_date' => $donation->prepared_date,
-                'status' => $donation->status,
-
+                'number_of_plates' => $donation->number_of_plates,
+                'delivery_status' => ucfirst($donation->delivery_status),
+                'price' => $donation->price,
+                'expiry_in_days' => $donation->expiry_in_days,
+                'prepared_date' => date_format(date_create($donation->prepared_date),'d-m-Y h:m:s a'),
+                'status' => ucfirst($donation->status),
+                'Created_by' => $donation->Created_by,
+                'country' => ucfirst($donation->country),
+                'state' => ucfirst($donation->state),
+                'city' => ucfirst($donation->city),
+                'pincode' => $donation->pincode,
+                'created_at' => date_format(date_create($donation->created_at),'d-m-Y h:m:s a'),
             ];
         });
     
