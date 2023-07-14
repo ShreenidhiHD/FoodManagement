@@ -47,7 +47,6 @@ function App() {
             <Route path="/userdonationrequests" element={<AuthenticatedRoute><Userdonationrequests/></AuthenticatedRoute>} />
             <Route path="/donations/:id" element={<AuthenticatedRoute><ViewDonation /></AuthenticatedRoute>} />
             <Route path="/donations/requests/:id/:eventname" element={<AuthenticatedRoute><ViewRequests /></AuthenticatedRoute>} />
-            
           </Routes>
         </div>
       </Router>

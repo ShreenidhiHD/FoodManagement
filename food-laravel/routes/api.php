@@ -47,4 +47,4 @@ Route::get('/purchase/requests_accept/{id}', [PurchaseController::class, 'accept
 Route::get('/test/re', [FoodDonationsController::class, 'donation_list'])->middleware('auth:sanctum');
 Route::get('/settings', [SettingsController::class, 'getSettings']);
 Route::get('/unittest', [FoodDonationsController::class, 'donation_list']);
-Route::get('/test', [PurchaseController::class, 'is_authorised']);
+Route::get('/validate-token', [UserController::class, 'validateToken'])->middleware('auth:sanctum');

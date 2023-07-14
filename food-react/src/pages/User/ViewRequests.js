@@ -139,11 +139,7 @@ const ViewRequests = () => {
         </div>
       );
     } else if (row.status === 'Cancelled') {
-      return (
-        <Button variant="contained" size="small" component={Link} to={`/request/${row.id}`}>
-          Request
-        </Button>
-      );
+      return 'Cancelled';
     } else if (row.status === 'Rejected') {
       return 'Rejected';
     } else if (row.status === 'Accepted') {

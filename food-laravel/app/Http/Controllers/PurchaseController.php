@@ -17,31 +17,20 @@ class PurchaseController extends Controller
 
     // Function to handle purchase creation
     public function createPurchase(Request $request)
-    {
-        $user = $request->user();
-        $purchase = Purchase::where('donation_id', $request->donation_id)
-            ->where('Created_by', $user->id)
-            ->first();
+{
+    $user = $request->user();
+    
+    // Create a new purchase entry regardless of whether one already exists or not
+    $purchase = new Purchase;
+    $purchase->donation_id = $request->donation_id;
+    $purchase->Created_by = $user->id;
+    $purchase->status = 'pending';
+    $purchase->description = $request->description;
+    $purchase->save();
 
-        if ($purchase) {
-            // If a purchase entry already exists, update the status to pending
-            $purchase->status = 'pending';
-            $purchase->description = $request->description;
-            $purchase->save();
+    return response()->json(['message' => 'Request created successfully'], 200);
+}
 
-            return response()->json(['message' => 'Request updated successfully'], 200);
-        } else {
-            // If no purchase entry exists, create a new one
-            $purchase = new Purchase;
-            $purchase->donation_id = $request->donation_id;
-            $purchase->Created_by = $user->id;
-            $purchase->status = 'pending';
-            $purchase->description = $request->description;
-            $purchase->save();
-
-            return response()->json(['message' => 'Request created successfully'], 200);
-        }
-    }
 
     public function user_donation_request(Request $request,$id){
         $user = Auth::guard('sanctum')->user();
@@ -88,30 +77,13 @@ class PurchaseController extends Controller
     }
 
     // Function to handle purchase cancellation
-    // public function cancelPurchase(Request $request, $id)
-    // {
-    //     $purchase = Purchase::where('id', $id)
-    //         ->where('Created_by', Auth::id())
-    //         ->first();
-
-    //     if (!$purchase) {
-    //         return response()->json(['message' => 'Purchase not found'], 404);
-    //     }
-
-    //     if ($purchase->status == 'cancelled') {
-    //         return response()->json(['message' => 'Purchase already cancelled'], 200);
-    //     }
-
-    //     $purchase->status = 'cancelled';
-    //     $purchase->save();
-
-    //     return response()->json(['message' => 'Purchase cancelled'], 200);
-    // }
     
     public function cancelPurchase(Request $request, $donationId)
     {
+        // Fetch the latest purchase entry instead of the first one
         $purchase = Purchase::where('donation_id', $donationId)
             ->where('Created_by', Auth::id())
+            ->latest()
             ->first();
     
         if (!$purchase) {
@@ -127,6 +99,7 @@ class PurchaseController extends Controller
     
         return response()->json(['message' => 'Purchase cancelled'], 200);
     }
+    
     
     public function cancelRequest(Request $request, $id)
     {
@@ -195,42 +168,6 @@ class PurchaseController extends Controller
         return $this->cancelPurchase($request, $id);
     }
 
-    // public function purchase_list(Request $request,$id) {
-    //     // Sanctum provides a handy way to get the authenticated user
-    //     $user = $request->user();
-    //     if (!$user) {
-    //         return response()->json(['message' => 'User not authenticated'], 401);
-    //     }
-    
-    //     $purchases = DB::table('purchases')->where('Created_by',$id)->get();
-    
-    //     // Structure the data as needed for the frontend
-    //     $columns = [
-    //         ['field' => 'id', 'headerName' => 'ID'],
-    //         ['field' => 'event_name', 'headerName' => 'Event Name'],
-    //         ['field' => 'description', 'headerName' => 'Description'],
-    //         ['field' => 'status', 'headerName' => 'Status'],
-    //         ['field' => 'created_at', 'headerName' => 'Request date']
-    //     ];
-        
-    //     $rows = $purchases->map(function($purchases) {
-    //         $event_name="";
-    //         $event_names=DB::table('donations')->where('id',$purchases->donation_id)->first();
-    //         $event_name=$event_names->event_name;
-    //         return [
-    //             'id' => $purchases->id,
-    //             'event_name' => $event_name,
-    //             'description' => $purchases->description,
-    //             'status' => $purchases->status,
-    //             'created_at'=>$purchases->created_at,
-    //         ];
-    //     });
-    
-    //     return response()->json([
-    //         'columns' => $columns,
-    //         'rows' => $rows
-    //     ]);
-    // }
     public function purchase_list(Request $request) {
         // Sanctum provides a handy way to get the authenticated user
         $user = $request->user();
