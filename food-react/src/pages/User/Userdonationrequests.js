@@ -34,7 +34,7 @@ const Userdonationrequests = () => {
     }
   };
   const actionButton = (row) => {
-      return <Button variant="contained" size="small" component={Link} to={`/donations/${row.id}`}>
+      return <Button variant="contained" size="small" component={Link} to={`/donations/requests/${row.id}/${row.event_name}`}>
         View requets
       </Button>
     
@@ -43,7 +43,7 @@ const Userdonationrequests = () => {
     <Container sx={{ marginTop: '2rem' }}>
       <Card>
         <CardContent>
-            <h1 className='text-center'>My Donations</h1>
+            <h1 className='text-center'>Requests</h1>
             <DataTable columns={columns} rows={rows} actionButton={actionButton} />
         </CardContent>
       </Card>

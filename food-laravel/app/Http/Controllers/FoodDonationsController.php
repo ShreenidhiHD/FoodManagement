@@ -108,68 +108,12 @@ class FoodDonationsController extends Controller
         }
         return $user_array;
     }
-
-    //Returns all active donation list
-    // public function donation_list(Request $request)
-    // {
-    //     $donations_list = [];
-    //     $donations = Donation::get();
-    
-    //     foreach ($donations as $donation) {
-    //         $temp = [];
-    //         $user = $this->get_user_details_by_userid($donation['Created_by']);
-    //         $user_status = $user['user_status'] ?? 'default_status';
-    
-    //         if ($user_status != 'deactived' && $donation['status'] == 'active') {
-    //             if (is_array($user) && count($user) > 0) {
-    //                 $temp['userid'] = $user['user_id'];
-    //                 $temp['username'] = $user['user_name'];
-    //                 $temp['verified'] = $user['is_verified'];
-    //             }
-    //             $temp['id'] = $donation['id'];
-    //             $temp['number_of_plates'] = $donation['number_of_plates'];
-    //             $temp['location'] = ucfirst($donation['location']);
-    //             $temp['delivery_status'] = ucfirst($donation['delivery_status']);
-    //             $temp['price'] = number_format($donation['price'], 2);
-    //             $temp['expiry_in_days'] = $donation['expiry_in_days'] . " Days";
-    //             $temp['food_type'] = ucfirst($donation['food_type']);
-    //             $temp['event_name'] = ucfirst($donation['event_name']);
-    //             $temp['description'] = ucfirst($donation['description']);
-    //             $temp['prepared_date'] = date_format(date_create($donation['prepared_date']), 'd-m-Y');
-    //             $temp['created_at'] = date_format(date_create($donation['created_at']), 'd-m-Y');
-    //             $temp['country'] = ucfirst($donation['country']);
-    //             $temp['state'] = ucfirst($donation['state']);
-    //             $temp['city'] = ucfirst($donation['city']);
-    //             $temp['pincode'] = $donation['pincode'];
-    
-    //             $purchase = Purchase::where('donation_id', $donation['id'])
-    //             ->where('Created_by', auth()->id())
-    //             ->whereIn('status', ['pending', 'cancelled'])
-    //             ->first();
-
-    
-    //             if ($purchase) {
-    //                 if ($purchase->status == 'cancelled') {
-    //                     $temp['buttonStatus'] = 'cancel';
-    //                 } else {
-    //                     $temp['buttonStatus'] = 'request';
-    //                 }
-    //             } else {
-    //                 $temp['buttonStatus'] = 'request no entry';
-    //             }
-    
-    //             array_push($donations_list, $temp);
-    //         }
-    //     }
-    
-    //     return response()->json(['donation' => $donations_list], 200);
-    // }
     
     public function donation_list(Request $request)
     {
         $donations_list = [];
         $donations = Donation::get();
-        
+    
         foreach ($donations as $donation) {
             $temp = [];
             $user = $this->get_user_details_by_userid($donation['Created_by']);
@@ -202,11 +146,14 @@ class FoodDonationsController extends Controller
                 } else {
                     $purchase = Purchase::where('donation_id', $donation['id'])
                         ->where('Created_by', auth()->id())
-                        ->whereIn('status', ['pending', 'cancelled'])
+                        ->latest() // get the latest purchase by this user for this donation
                         ->first();
-    
+                    
                     if ($purchase) {
-                        if ($purchase->status == 'cancelled') {
+                        if($purchase->status == 'accepted'){
+                            $temp['buttonStatus'] = 'accepted';
+                        }
+                        else if ($purchase->status == 'cancelled') {
                             $temp['buttonStatus'] = 'request';
                         } else {
                             $temp['buttonStatus'] = 'cancel';
@@ -221,6 +168,7 @@ class FoodDonationsController extends Controller
     
         return response()->json(['donation' => $donations_list], 200);
     }
+    
     
     
 
@@ -264,18 +212,22 @@ class FoodDonationsController extends Controller
         // Update the donation
         $donation->update($validated);
          
-        // Send email notification
-        $emailData = [
-            'to' => 'shreenidhishree34@gmail.com',
-            'subject' => 'Donation Updated',
-            'data' => [
-                'name' => 'John Doe',
-                'message' => 'The donation has been updated. Donation ID: ' . $donation->id,
-            ],
-        ];
-        
-        EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
-        
+        try {
+            // Send email notification
+            $emailData = [
+                'to' => 'shreenidhishree34@gmail.com',
+                'subject' => 'Donation Updated',
+                'data' => [
+                    'name' => 'John Doe',
+                    'message' => 'The donation has been updated. Donation ID: ' . $donation->id,
+                ],
+            ];
+            
+            EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+        } catch (\Exception $e) {
+            // Log the exception or handle it in another way
+            \Log::error('Failed to send email: '.$e->getMessage());
+        }
 
         return response()->json([
             'message' => 'Donation updated successfully.',
