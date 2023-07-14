@@ -16,7 +16,7 @@ class CreateTableName extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
             $table->integer('donation_id');
-            $table->integer('Crated_by');
+            $table->integer('Created_by');
             $table->enum('status',['pending', 'accepted','rejected','expired','completed','cancelled'])->default('pending');
             $table->string('description', 500);
             $table->timestamps();

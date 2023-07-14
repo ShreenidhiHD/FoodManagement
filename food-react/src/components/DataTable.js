@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 
-const DataTable = ({ columns, rows, detailPageLink}) => {
+const DataTable = ({ columns, rows, actionButton, detailPageLink, actionButtonText}) => {
   const [sortField, setSortField] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
   const [searchQuery, setSearchQuery] = useState('');
@@ -121,11 +121,9 @@ const DataTable = ({ columns, rows, detailPageLink}) => {
               {columns.map((column) => (
                 <TableCell key={column.field}>{row[column.field]}</TableCell>
               ))}
-              <TableCell>
-              <Button variant="contained" size="small" component={Link} to={detailPageLink(row.id)}>
-                View
-              </Button>
-            </TableCell>
+               <TableCell>
+            {actionButton(row)}
+          </TableCell>
 
             </TableRow>
           ))}
