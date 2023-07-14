@@ -4,6 +4,8 @@ import { Container, Card, CardContent } from '@mui/material';
 import axios from 'axios';
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 const ViewRequests = () => {
   const [columns, setColumns] = useState([]);
@@ -13,7 +15,33 @@ const ViewRequests = () => {
   useEffect(() => {
     fetchData();
   }, []);
+  const handleCancelClick = async (item) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        // Handle unauthenticated state
+        return;
+      }
 
+      const response = await axios.get(`http://localhost:8000/api/purchase/requests/cancel/${item.donation_id}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      console.log(response.data); // Check the response data
+
+      if (response.data.message === "Purchase cancelled") {
+        toast.success(`Cancellation of "${item.event_name}" successful`);
+        setRows((prevRows) => prevRows.filter((row) => row.donation_id !== item.donation_id));
+      } else {
+        toast.error(response.data.message || 'Cancellation failed');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Cancellation failed');
+    }
+  };
   const fetchData = async () => {
     try {
       const authToken = localStorage.getItem('authToken');
@@ -21,8 +49,8 @@ const ViewRequests = () => {
         // Handle unauthenticated state
         return;
       }
-  
-      const response = await axios.get(`http://localhost:8000/api/donations/${id}`, {
+      console.log(id);
+      const response = await axios.get(`http://localhost:8000/api/donations/requests/${id}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
