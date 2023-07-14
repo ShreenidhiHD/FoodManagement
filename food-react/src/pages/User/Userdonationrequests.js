@@ -34,7 +34,7 @@ const Userdonationrequests = () => {
     }
   };
   const actionButton = (row) => {
-      return <Button variant="contained" size="small" component={Link} to={`/donations/${row.id}`}>
+      return <Button variant="contained" size="small" component={Link} to={`/donations/requests/${row.id}`}>
         View requets
       </Button>
     
