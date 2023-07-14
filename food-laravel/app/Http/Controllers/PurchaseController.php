@@ -189,7 +189,9 @@ class PurchaseController extends Controller
         $rows = $purchases->map(function($purchase) {
             $event_name="";
             $event_names=DB::table('donations')->where('id',$purchase->donation_id)->first();
-            $event_name=$event_names->event_name;
+            if ($event_names) {
+                $event_name=$event_names->event_name;
+            }
             return [
                 'id' => $purchase->id,
                 'event_name' => $event_name,
@@ -205,6 +207,7 @@ class PurchaseController extends Controller
             'rows' => $rows
         ]);
     }
+    
     public function userPendingPurchases(Request $request) {
         // Sanctum provides a handy way to get the authenticated user
         $user = $request->user();
