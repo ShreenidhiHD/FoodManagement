@@ -14,6 +14,15 @@ class Purchase extends Model
         'description',
        
     ];
+    public function userPurchases($userId) {
+        return $this->where('Created_by', $userId)->get();
+    }
+    public function userPendingPurchases($userId) {
+        return $this->where('Created_by', $userId)
+                    ->where('status', 'pending')
+                    ->get();
+    }
+    
     
    
    

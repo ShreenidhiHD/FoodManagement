@@ -169,7 +169,7 @@ class FoodDonationsController extends Controller
     {
         $donations_list = [];
         $donations = Donation::get();
-    
+        
         foreach ($donations as $donation) {
             $temp = [];
             $user = $this->get_user_details_by_userid($donation['Created_by']);

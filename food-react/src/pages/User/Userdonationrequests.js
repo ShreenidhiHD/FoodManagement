@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const UserDonations = () => {
+const Userdonationrequests = () => {
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
@@ -35,7 +35,7 @@ const UserDonations = () => {
   };
   const actionButton = (row) => {
       return <Button variant="contained" size="small" component={Link} to={`/donations/${row.id}`}>
-        View
+        View requets
       </Button>
     
   }
@@ -51,4 +51,4 @@ const UserDonations = () => {
   );
 };
 
-export default UserDonations;
+export default Userdonationrequests;

@@ -3,15 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB;
 use Illuminate\Support\Facades\Auth;
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Purchase;
 use App\Models\Donation;
-use Illuminate\Support\Facades\Auth;
 
 class PurchaseController extends Controller
 {
@@ -119,4 +114,117 @@ class PurchaseController extends Controller
         $this->is_authorised($request);
         return $this->cancelPurchase($request, $id);
     }
+
+    // public function purchase_list(Request $request,$id) {
+    //     // Sanctum provides a handy way to get the authenticated user
+    //     $user = $request->user();
+    //     if (!$user) {
+    //         return response()->json(['message' => 'User not authenticated'], 401);
+    //     }
+    
+    //     $purchases = DB::table('purchases')->where('Created_by',$id)->get();
+    
+    //     // Structure the data as needed for the frontend
+    //     $columns = [
+    //         ['field' => 'id', 'headerName' => 'ID'],
+    //         ['field' => 'event_name', 'headerName' => 'Event Name'],
+    //         ['field' => 'description', 'headerName' => 'Description'],
+    //         ['field' => 'status', 'headerName' => 'Status'],
+    //         ['field' => 'created_at', 'headerName' => 'Request date']
+    //     ];
+        
+    //     $rows = $purchases->map(function($purchases) {
+    //         $event_name="";
+    //         $event_names=DB::table('donations')->where('id',$purchases->donation_id)->first();
+    //         $event_name=$event_names->event_name;
+    //         return [
+    //             'id' => $purchases->id,
+    //             'event_name' => $event_name,
+    //             'description' => $purchases->description,
+    //             'status' => $purchases->status,
+    //             'created_at'=>$purchases->created_at,
+    //         ];
+    //     });
+    
+    //     return response()->json([
+    //         'columns' => $columns,
+    //         'rows' => $rows
+    //     ]);
+    // }
+    public function purchase_list(Request $request) {
+        // Sanctum provides a handy way to get the authenticated user
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+    
+        $purchases = (new Purchase)->userPurchases($user->id);
+    
+        // Structure the data as needed for the frontend
+        $columns = [
+            ['field' => 'id', 'headerName' => 'ID'],
+            ['field' => 'event_name', 'headerName' => 'Event Name'],
+            ['field' => 'description', 'headerName' => 'Description'],
+            ['field' => 'status', 'headerName' => 'Status'],
+            ['field' => 'created_at', 'headerName' => 'Request date']
+        ];
+        
+        $rows = $purchases->map(function($purchase) {
+            $event_name="";
+            $event_names=DB::table('donations')->where('id',$purchase->donation_id)->first();
+            $event_name=$event_names->event_name;
+            return [
+                'id' => $purchase->id,
+                'event_name' => $event_name,
+                'description' => $purchase->description,
+                'status' => $purchase->status,
+                'created_at' => $purchase->created_at->format('Y-m-d H:i:s'),
+                'donation_id' => $purchase->donation_id 
+            ];
+        });
+    
+        return response()->json([
+            'columns' => $columns,
+            'rows' => $rows
+        ]);
+    }
+    public function userPendingPurchases(Request $request) {
+        // Sanctum provides a handy way to get the authenticated user
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+    
+        $purchases = (new Purchase)->userPendingPurchases($user->id);
+    
+        // Structure the data as needed for the frontend
+        $columns = [
+            ['field' => 'id', 'headerName' => 'ID'],
+            ['field' => 'event_name', 'headerName' => 'Event Name'],
+            ['field' => 'description', 'headerName' => 'Description'],
+            ['field' => 'status', 'headerName' => 'Status'],
+            ['field' => 'created_at', 'headerName' => 'Request date']
+        ];
+    
+        $rows = $purchases->map(function($purchase) {
+            $event_name = "";
+            $event_names = DB::table('donations')->where('id', $purchase->donation_id)->first();
+            $event_name = $event_names->event_name;
+            return [
+                'id' => $purchase->id,
+                'event_name' => $event_name,
+                'description' => $purchase->description,
+                'status' => $purchase->status,
+                'created_at' => $purchase->created_at->format('Y-m-d H:i:s'),
+                'donation_id' => $purchase->donation_id 
+            ];
+        });
+    
+        return response()->json([
+            'columns' => $columns,
+            'rows' => $rows
+        ]);
+    }
+    
+    
 }

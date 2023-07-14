@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const UserPurchases = () => {
+const UserRequests = () => {
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
@@ -23,12 +23,11 @@ const UserPurchases = () => {
         return;
       }
 
-      const response = await axios.get('http://localhost:8000/api/user-purchases', {
+      const response = await axios.get('http://localhost:8000/api/user-requests', {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
-
       console.log(response.data);
       setColumns(response.data.columns);
       setRows(response.data.rows);
@@ -53,6 +52,7 @@ const UserPurchases = () => {
 
       console.log(response.data); // Check the response data
 
+      // Display toast notification and update the rows state
       if (response.data.message === "Purchase cancelled") {
         toast.success(`Cancellation of "${item.event_name}" successful`);
         setRows((prevRows) => prevRows.filter((row) => row.donation_id !== item.donation_id));
@@ -66,21 +66,11 @@ const UserPurchases = () => {
   };
 
   const actionButton = (row) => {
-    if (row.status === 'pending') {
-      return (
-        <Button variant="contained" size="small" onClick={() => handleCancelClick(row)}>
-          Cancel
-        </Button>
-      );
-    } else if (row.status === 'cancelled') {
-      return (
-        <Button variant="contained" size="small" component={Link} to={`/request/${row.id}`}>
-          Request
-        </Button>
-      );
-    } else {
-      return null;
-    }
+    return (
+      <Button variant="contained" size="small" onClick={() => handleCancelClick(row)}>
+        Cancel
+      </Button>
+    );
   };
 
   return (
@@ -96,4 +86,4 @@ const UserPurchases = () => {
   );
 };
 
-export default UserPurchases;
+export default UserRequests;
