@@ -134,11 +134,7 @@ const UserPurchases = () => {
         </Button>
       );
     } else if (row.status === 'cancelled') {
-      return (
-        <Button variant="contained" size="small" onClick={() => handleRequestAgainClick(row)}>
-          Request Again
-        </Button>
-      );
+      return 'Cancelled'
     } else if (row.status === 'rejected') {
       return 'Rejected';
     } else {
