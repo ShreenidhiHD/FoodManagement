@@ -140,8 +140,12 @@ class PurchaseController extends Controller
         if ($purchase->status == 'cancelled') {
             return response()->json(['message' => 'Purchase already cancelled'], 200);
         }
+
+        if ($purchase->status == 'rejected') {
+            return response()->json(['message' => 'Purchase already rejected'], 200);
+        }
     
-        $purchase->status = 'cancelled';
+        $purchase->status = 'rejected';
         $purchase->save();
     
         return response()->json(['message' => 'Purchase cancelled'], 200);
