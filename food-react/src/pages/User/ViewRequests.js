@@ -5,9 +5,10 @@ import axios from 'axios';
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const Userdonationrequests = () => {
+const ViewRequests = () => {
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
+  const { id } = useParams(); 
 
   useEffect(() => {
     fetchData();
@@ -21,7 +22,7 @@ const Userdonationrequests = () => {
         return;
       }
   
-      const response = await axios.get('http://localhost:8000/api/user-donations', {
+      const response = await axios.get(`http://localhost:8000/api/donations/${id}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -34,9 +35,23 @@ const Userdonationrequests = () => {
     }
   };
   const actionButton = (row) => {
-      return <Button variant="contained" size="small" component={Link} to={`/donations/requests/${row.id}`}>
-        View requets
-      </Button>
+    if (row.status === 'pending') {
+      return (
+        <Button variant="contained" size="small" onClick={() => handleCancelClick(row)}>
+          Cancel
+        </Button>
+        
+      );
+    } else if (row.status === 'cancelled') {
+      return (
+        <Button variant="contained" size="small" component={Link} to={`/request/${row.id}`}>
+          Request
+        </Button>
+        
+      );
+    } else {
+      return null;
+    }
     
   }
   return (
@@ -51,4 +66,4 @@ const Userdonationrequests = () => {
   );
 };
 
-export default Userdonationrequests;
+export default ViewRequests;
