@@ -16,6 +16,7 @@ const ViewRequests = () => {
     fetchData();
   }, []);
   const handleCancelClick = async (item) => {
+    console.log(item.donation_id);
     try {
       const authToken = localStorage.getItem('authToken');
       if (!authToken) {
@@ -63,14 +64,14 @@ const ViewRequests = () => {
     }
   };
   const actionButton = (row) => {
-    if (row.status === 'pending') {
+    if (row.status === 'Pending') {
       return (
         <Button variant="contained" size="small" onClick={() => handleCancelClick(row)}>
           Cancel
         </Button>
         
       );
-    } else if (row.status === 'cancelled') {
+    } else if (row.status === 'Cancelled') {
       return (
         <Button variant="contained" size="small" component={Link} to={`/request/${row.id}`}>
           Request
