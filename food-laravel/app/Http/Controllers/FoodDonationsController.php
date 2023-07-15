@@ -153,9 +153,19 @@ class FoodDonationsController extends Controller
                         if($purchase->status == 'accepted'){
                             $temp['buttonStatus'] = 'accepted';
                         }
+                        else if ($purchase->status == 'rejected') {
+                            $temp['buttonStatus'] = 'request';
+                        } 
                         else if ($purchase->status == 'cancelled') {
                             $temp['buttonStatus'] = 'request';
-                        } else {
+                        } 
+                        else if ($purchase->status == 'expired') {
+                            $temp['buttonStatus'] = 'Expired';
+                        }  
+                        else if ($purchase->status == 'completed') {
+                            $temp['buttonStatus'] = 'completed';
+                        } 
+                        else {
                             $temp['buttonStatus'] = 'cancel';
                         }
                     } else {
