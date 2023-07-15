@@ -215,7 +215,7 @@ class FoodDonationsController extends Controller
         try {
             // Send email notification
             $emailData = [
-                'to' => 'shreenidhishree34@gmail.com',
+                'to' => 'example@gmail.com',
                 'subject' => 'Donation Updated',
                 'data' => [
                     'name' => $donation->id,
