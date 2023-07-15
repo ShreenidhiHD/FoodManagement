@@ -244,19 +244,24 @@ const RecipeReviewCard = ({ item }) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        {buttonStatus === 'donater' ? (
-          <Typography variant="body1" color="text.primary">
-            Thanks for donating
-          </Typography>
-        ) : (
-          <>
-            {buttonStatus === 'cancel' ? (
-              <RequestButton onClick={handleCancelClick}>Cancel</RequestButton>
-            ) : (
-              <RequestButton onClick={handleRequestClick}>Request</RequestButton>
-            )}
-          </>
-        )}
+      {buttonStatus === 'donater' ? (
+        <Typography variant="body1" color="text.primary">
+          Thanks for donating
+        </Typography>
+      ) : (
+        <>
+          {buttonStatus === 'cancel' ? (
+            <RequestButton onClick={handleCancelClick}>Cancel</RequestButton>
+          ) : buttonStatus === 'accepted' ? (
+            <Typography variant="body1" color="text.primary">
+              Your request accepted
+            </Typography>
+          ) : (
+            <RequestButton onClick={handleRequestClick}>Request</RequestButton>
+          )}
+        </>
+      )}
+
         
   <IconButton
   aria-label="share"
