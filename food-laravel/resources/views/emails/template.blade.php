@@ -44,7 +44,7 @@
         <div class="content">
             <p>Dear {{ $name }},</p>
             <p>This is a sample email template.</p>
-            <p>{{ $message }}</p>
+            <p>{!! $message !!}</p> <!-- Using raw unescaped content here -->
         </div>
         <div class="footer">
             <p>Thank you,</p>

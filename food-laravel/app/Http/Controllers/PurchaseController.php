@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Purchase;
 use App\Models\Donation;
+use App\Helpers\EmailHelper;
 
 class PurchaseController extends Controller
 {
@@ -27,6 +28,25 @@ class PurchaseController extends Controller
     $purchase->status = 'pending';
     $purchase->description = $request->description;
     $purchase->save();
+    
+    $donation=DB::table('donations')->where('id',$purchase->donation_id)->first();
+    try {
+        // Send email notification
+        $emailData = [
+            'to' => $user->email,
+            'subject' => 'Request sent successfully ' . $donation->event_name,
+            'data' => [
+                'name' => $user->name,
+                'message' => 'You have successfully requested a donation <b>'. $donation->event_name . '</b> at <b>' . $purchase->created_at . '</b>. Your Purchase ID is: <b>' . $purchase->id . '</b>',
+            ],
+        ];
+                  
+        
+        EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+    } catch (\Exception $e) {
+        // Log the exception or handle it in another way
+        \Log::error('Failed to send email: '.$e->getMessage());
+    }
 
     return response()->json(['message' => 'Request created successfully'], 200);
 }
@@ -68,7 +88,23 @@ class PurchaseController extends Controller
                 'created_at'=>date_format(date_create($requst->created_at),'d-m-Y h:m:s a'),
             ];
         });
-    
+        try {
+            // Send email notification
+            $emailData = [
+                'to' => $user->email,
+                'subject' => 'Donation request successfully : ' . $purchase->id,
+                'data' => [
+                    'name' => $user->name,
+                    'message' => 'You have successfully created a donation entry for the event <b>'. $donation->event_name . '</b> at <b>' . $donation->created_at . '</b>. Thank you for your generous contribution to help reduce food waste. Your Donation ID is: <b>' . $donation->id . '</b>',
+                ],
+            ];
+                      
+            
+            EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+        } catch (\Exception $e) {
+            // Log the exception or handle it in another way
+            \Log::error('Failed to send email: '.$e->getMessage());
+        }
         return response()->json([
             'columns' => $columns,
             'rows' => $rows
@@ -80,6 +116,10 @@ class PurchaseController extends Controller
     
     public function cancelPurchase(Request $request, $donationId)
     {
+        $user = Auth::guard('sanctum')->user();
+        if(!$user){
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
         // Fetch the latest purchase entry instead of the first one
         $purchase = Purchase::where('donation_id', $donationId)
             ->where('Created_by', Auth::id())
@@ -93,19 +133,42 @@ class PurchaseController extends Controller
         if ($purchase->status == 'cancelled') {
             return response()->json(['message' => 'Purchase already cancelled'], 200);
         }
+        if ($purchase->status == 'accepted') {
+            return response()->json(['message' => 'Cancel failed Purchase already appected'], 401);
+        }
     
         $purchase->status = 'cancelled';
         $purchase->save();
-    
+        try {
+            // Send email notification
+            $emailData = [
+                'to' => $user->email,
+                'subject' => 'Donation request canceled successfully : ' . $purchase->id,
+                'data' => [
+                    'name' => $user->name,
+                    'message' => 'Donation request canceled successfully : ' . $purchase->id ,
+                ],
+            ];
+                      
+            
+            EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+        } catch (\Exception $e) {
+            // Log the exception or handle it in another way
+            \Log::error('Failed to send email: '.$e->getMessage());
+        }
         return response()->json(['message' => 'Purchase cancelled'], 200);
     }
     
     
     public function cancelRequest(Request $request, $id)
     {
+        $user = Auth::guard('sanctum')->user();
+        if(!$user){
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
         $purchase = Purchase::where('id', $id)
             ->first();
-    
+        $userfrom=DB::table('users')->where('id', $purchase->Created_by)->first();
         if (!$purchase) {
             return response()->json(['message' => 'Purchase not found'], 404);
         }
@@ -120,21 +183,91 @@ class PurchaseController extends Controller
     
         $purchase->status = 'rejected';
         $purchase->save();
-    
+        try {
+            // Send email notification
+            $emailData = [
+                'to' => $user->email,
+                'subject' => 'Donation request rejected successfully : ' . $purchase->id,
+                'data' => [
+                    'name' => $user->name,
+                    'message' => 'Donation request rejected successfully : ' . $purchase->id ,
+                ],
+            ];
+                      
+            
+            EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+        } catch (\Exception $e) {
+            // Log the exception or handle it in another way
+            \Log::error('Failed to send email: '.$e->getMessage());
+        }
+        try {
+            // Send email notification
+            $emailData = [
+                'to' => $userfrom->email,
+                'subject' => 'Your donation request rejected successfully : ' . $purchase->id,
+                'data' => [
+                    'name' => $user->name,
+                    'message' => 'Your donation request rejected successfully : ' . $purchase->id ,
+                ],
+            ];
+                      
+            
+            EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+        } catch (\Exception $e) {
+            // Log the exception or handle it in another way
+            \Log::error('Failed to send email: '.$e->getMessage());
+        }
         return response()->json(['message' => 'Purchase cancelled'], 200);
     }
 
     public function acceptRequest(Request $request, $id)
     {
+        $user = Auth::guard('sanctum')->user();
+        if(!$user){
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
         $purchase = Purchase::where('id', $id)->first();
-    
+        $userfrom=DB::table('users')->where('id', $purchase->Created_by)->first();
         if (!$purchase) {
             return response()->json(['message' => 'Purchase not found'], 404);
         }
     
         $purchase->status = 'accepted';
         $purchase->save();
-    
+        try {
+            // Send email notification
+            $emailData = [
+                'to' => $user->email,
+                'subject' => 'Donation request accepted successfully : ' . $purchase->id,
+                'data' => [
+                    'name' => $user->name,
+                    'message' => 'Donation request accepted successfully : ' . $purchase->id ,
+                ],
+            ];
+                      
+            
+            EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+        } catch (\Exception $e) {
+            // Log the exception or handle it in another way
+            \Log::error('Failed to send email: '.$e->getMessage());
+        }
+        try {
+            // Send email notification
+            $emailData = [
+                'to' => $userfrom->email,
+                'subject' => 'Donation request accepted successfully : ' . $purchase->id,
+                'data' => [
+                    'name' => $userfrom->name,
+                    'message' => 'Donation request accepted successfully : ' . $purchase->id ,
+                ],
+            ];
+                      
+            
+            EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+        } catch (\Exception $e) {
+            // Log the exception or handle it in another way
+            \Log::error('Failed to send email: '.$e->getMessage());
+        }
         return response()->json(['message' => 'Purchase request accepted'], 200);
     }
 
