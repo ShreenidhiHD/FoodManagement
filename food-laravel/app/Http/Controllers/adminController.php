@@ -337,5 +337,6 @@ class adminController extends Controller
 
         if(DB::table('users')->where(['id'=>$user->id])->update(['password'=>Hash::make($request->new_password)])){ return response()->json(['message' => 'Password updated successfully'], 200); }
         else{ return response()->json(['message' => 'Unable to update password'], 401); }
+
     }
 }

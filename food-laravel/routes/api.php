@@ -39,6 +39,9 @@ Route::post('/purchase/requests', [PurchaseController::class, 'create'])->middle
 Route::get('/purchase/requests/cancel/{id}', [PurchaseController::class, 'deletes'])->middleware('auth:sanctum');
 Route::get('/user-purchases', [PurchaseController::class, 'purchase_list'])->middleware('auth:sanctum');
 Route::get('/user-requests', [PurchaseController::class, 'userPendingPurchases'])->middleware('auth:sanctum');
+Route::get('/donations/requests/{id}', [PurchaseController::class, 'user_donation_request'])->middleware('auth:sanctum');
+Route::get('/purchase/requests_cancel/{id}', [PurchaseController::class, 'cancelRequest'])->middleware('auth:sanctum');
+Route::get('/purchase/requests_accept/{id}', [PurchaseController::class, 'acceptRequest'])->middleware('auth:sanctum');
 
 //Admin routes
 Route::get('/users', [adminController::class, 'users'])->middleware('auth:sanctum');
@@ -59,4 +62,4 @@ Route::post('/admin_password_change', [adminController::class, 'changePassword']
 Route::get('/test/re', [FoodDonationsController::class, 'donation_list'])->middleware('auth:sanctum');
 Route::get('/settings', [SettingsController::class, 'getSettings']);
 Route::get('/unittest', [FoodDonationsController::class, 'donation_list']);
-Route::get('/test', [PurchaseController::class, 'is_authorised']);
+Route::get('/validate-token', [UserController::class, 'validateToken'])->middleware('auth:sanctum');
