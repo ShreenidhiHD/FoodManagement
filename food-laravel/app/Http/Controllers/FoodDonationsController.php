@@ -12,6 +12,7 @@ use Illuminate\Database\QueryException;
 use App\Helpers\EmailHelper;
 use PDOException;
 use DB;
+use Auth;
 
 class FoodDonationsController extends Controller
 {

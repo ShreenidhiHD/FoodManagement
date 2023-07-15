@@ -19,8 +19,10 @@ import UserPurchases from './pages/User/UserPurchases';
 import UserRequests from './pages/User/UserRequests';
 import Userdonationrequests from './pages/User/Userdonationrequests';
 import ViewRequests from './pages/User/ViewRequests';
-
-
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import AdminUsers from './pages/Admin/AdminUsers';
+import AdminDonations from './pages/Admin/AdminDonations';
+import AdminViewPurchases from './pages/Admin/AdminViewPurchases';
 // The App component wraps the entire application and sets up routing for all pages.
 // It also provides settings to all components using the SettingsProvider.
 function App() {
@@ -47,6 +49,10 @@ function App() {
             <Route path="/userdonationrequests" element={<AuthenticatedRoute><Userdonationrequests/></AuthenticatedRoute>} />
             <Route path="/donations/:id" element={<AuthenticatedRoute><ViewDonation /></AuthenticatedRoute>} />
             <Route path="/donations/requests/:id/:eventname" element={<AuthenticatedRoute><ViewRequests /></AuthenticatedRoute>} />
+            <Route path="/admindashboard" element={<AuthenticatedRoute><AdminDashboard /></AuthenticatedRoute>} />
+            <Route path="/adminusers" element={<AuthenticatedRoute><AdminUsers /></AuthenticatedRoute>} />
+            <Route path="/admindonations" element={<AuthenticatedRoute><AdminDonations /></AuthenticatedRoute>} />
+            <Route path="/adminviewpurchases/:id" element={<AuthenticatedRoute><AdminViewPurchases /></AuthenticatedRoute>} />
           </Routes>
         </div>
       </Router>

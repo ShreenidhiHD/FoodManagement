@@ -1,8 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Helpers\EmailHelper;
 use Illuminate\Http\Request;
+use PDOException;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
+use DB;
 
 class adminController extends Controller
 {
@@ -164,12 +169,12 @@ class adminController extends Controller
         }
 
         //Get donation id
-        $donation_ids=DB::table('donation')->where('Created_by',$id)->get();
+        $donation_ids=DB::table('donations')->where('Created_by',$id)->get();
         $total_rows=count($donation_ids);
         $total_successful_updation=0;
         foreach($donation_ids as $donation_id){
             //Deactivate purchases
-            $status_initial=DB::table('purchases')->where(['donation_id'=>$donation_id->id,'status'=>'pending'])->update('status','deactivated');
+            $status_initial=DB::table('purchases')->where(['donation_id'=>$donation_id->id,'status'=>'pending'])->update(['status'=>'deactivated']);
             if($status_initial){
                 //Deactivate donations
                 $status_secondary=DB::table('donations')->where(['id'=>$donation_id->id,'status'=>'active'])->update(['status'=>'deactive']);
@@ -184,7 +189,7 @@ class adminController extends Controller
             if($status){ return response()->json(['message' => 'User account updated successfully'], 200); }
             else{ return response()->json(['message' => 'Unable to update user! some of users donations and purchases might have affected'], 401); }
         }
-        else{ return response()->json(['message' => 'Unable to update the user! some of users donations and purchases might have affected'], 401); }
+        else{ return response()->json(['message' =>  $total_rows.'Unable to update the user! some of users donations and purchases might have affected'], 401); }
     }
 
     public function activate_user(Request $request,$id){
