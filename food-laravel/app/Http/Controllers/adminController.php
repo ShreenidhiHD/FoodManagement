@@ -173,19 +173,29 @@ class adminController extends Controller
         $total_rows=count($donation_ids);
         $total_successful_updation=0;
         foreach($donation_ids as $donation_id){
+            $flag=0;
             //Deactivate purchases
             $status_initial=DB::table('purchases')->where(['donation_id'=>$donation_id->id,'status'=>'pending'])->update(['status'=>'deactivated']);
             if($status_initial){
+                $flag=1;
+            }
+            else{
+                $results=DB::table('purchases')->where(['donation_id'=>$donation_id->id,'status'=>'pending'])->get();
+                if(count($results)<=0){ $flag=1; }
+            }
+
+            if($flag==1){
                 //Deactivate donations
+                $result=DB::table('donations')->where(['id'=>$donation_id->id,'status'=>'active'])->get();
                 $status_secondary=DB::table('donations')->where(['id'=>$donation_id->id,'status'=>'active'])->update(['status'=>'deactive']);
-                if($status_secondary){
+                if($status_secondary or count($result)<=0){
                     $total_successful_updation=$total_successful_updation+1;
                 }
             }
         }
 
         if($total_rows==$total_successful_updation){
-            $status=DB::table('users')->where(['id'=>$id,'status'=>'active'])->update(['status'=>'deactive']);
+            $status=DB::table('users')->where(['id'=>$id,'status'=>'active'])->update(['status'=>'deactived']);
             if($status){ return response()->json(['message' => 'User account updated successfully'], 200); }
             else{ return response()->json(['message' => 'Unable to update user! some of users donations and purchases might have affected'], 401); }
         }
@@ -200,23 +210,30 @@ class adminController extends Controller
         }
 
         //Get donation id
-        $donation_ids=DB::table('donation')->where('Created_by',$id)->get();
+        $donation_ids=DB::table('donations')->where('Created_by',$id)->get();
         $total_rows=count($donation_ids);
         $total_successful_updation=0;
         foreach($donation_ids as $donation_id){
+            $flag=0;
             //Activate purchases
-            $status_initial=DB::table('purchases')->where(['donation_id'=>$donation_id->id,'status'=>'deactivated'])->update('status','pending');
-            if($status_initial){
+            $results=DB::table('purchases')->where(['donation_id'=>$donation_id->id,'status'=>'deactivated'])->get();
+            $status_initial=DB::table('purchases')->where(['donation_id'=>$donation_id->id,'status'=>'deactivated'])->update(['status'=>'pending']);
+            if($status_initial or count($results)<=0){
+                $flag=1;
+            }
+
+            if($flag==1){
                 //Activate donations
+                $result=DB::table('donations')->where(['id'=>$donation_id->id,'status'=>'deactive'])->get();
                 $status_secondary=DB::table('donations')->where(['id'=>$donation_id->id,'status'=>'deactive'])->update(['status'=>'active']);
-                if($status_secondary){
+                if($status_secondary or count($result)<=0){
                     $total_successful_updation=$total_successful_updation+1;
                 }
             }
         }
 
         if($total_rows==$total_successful_updation){
-            $status=DB::table('users')->where(['id'=>$id,'status'=>'deactive'])->update(['status'=>'active']);
+            $status=DB::table('users')->where(['id'=>$id,'status'=>'deactived'])->update(['status'=>'active']);
             if($status){ return response()->json(['message' => 'User account updated successfully'], 200); }
             else{ return response()->json(['message' => 'Unable to update user! some of users donations and purchases might have affected'], 401); }
         }
@@ -230,18 +247,29 @@ class adminController extends Controller
         if(!$user){
             return response()->json(['message' => 'User not authenticated'], 401);
         }
+
+        $flag=0;
         
-        $status_initial=DB::table('purchases')->where(['donation_id'=>$id,'status'=>'pending'])->update('status','deactivated');
+        $status_initial=DB::table('purchases')->where(['donation_id'=>$id,'status'=>'pending'])->update(['status'=>'deactivated']);
         if($status_initial){
+            $flag=1;
+        }
+        else{
+            $count=DB::table('purchases')->where(['donation_id'=>$id,'status'=>'pending'])->get();
+            if(count($count)==0){ $flag=1; }
+            else{ return response()->json(['message' => 'Unable to update the donation'], 401); }
+        }
+
+        if($flag==1){
             $status=DB::table('donations')->where(['id'=>$id,'status'=>'active'])->update(['status'=>'deactive']);
 
             if($status){ return response()->json(['message' => 'Donation updated successfully'], 200); }
             else{ 
-                DB::table('purchases')->where(['donation_id'=>$id,'status'=>'deactivated'])->update('status','pending');
+                DB::table('purchases')->where(['donation_id'=>$id,'status'=>'deactivated'])->update(['status'=>'pending']);
                 return response()->json(['message' => 'Unable to update donation'], 401); 
             }
         }
-        else{ return response()->json(['message' => 'Unable to update the donation'], 401); }
+        else{ return response()->json(['message' => 'Unable to update donation'], 401); }
     }
 
     public function activate_donation(Request $request,$id){
@@ -251,18 +279,28 @@ class adminController extends Controller
             return response()->json(['message' => 'User not authenticated'], 401);
         }
 
-        $status_initial=DB::table('purchases')->where(['donation_id'=>$id,'status'=>'deactivated'])->update('status','pending');
+        $flag=0;
+        
+        $status_initial=DB::table('purchases')->where(['donation_id'=>$id,'status'=>'deactivated'])->update(['status'=>'pending']);
         if($status_initial){
+            $flag=1;
+        }
+        else{
+            $count=DB::table('purchases')->where(['donation_id'=>$id,'status'=>'deactivated'])->get();
+            if(count($count)==0){ $flag=1; }
+            else{ return response()->json(['message' => 'Unable to update the donation'], 401); }
+        }
+
+        if($flag==1){
             $status=DB::table('donations')->where(['id'=>$id,'status'=>'deactive'])->update(['status'=>'active']);
 
             if($status){ return response()->json(['message' => 'Donation updated successfully'], 200); }
             else{ 
-                DB::table('purchases')->where(['donation_id'=>$id,'status'=>'pending'])->update('status','deactivated');
+                DB::table('purchases')->where(['donation_id'=>$id,'status'=>'pending'])->update(['status'=>'deactivated']);
                 return response()->json(['message' => 'Unable to update donation'], 401); 
             }
         }
-        else{ return response()->json(['message' => 'Unable to update the donation'], 401); }
-        
+        else{ return response()->json(['message' => 'Unable to update donation'], 401); }
     }
 
     public function deactivate_purchase(Request $request,$id){
@@ -271,6 +309,9 @@ class adminController extends Controller
         if(!$user){
             return response()->json(['message' => 'User not authenticated'], 401);
         }
+
+        $current_status=DB::table('purchases')->where(['id'=>$id])->first();
+        if($current_status->status!='pending'){ return response()->json(['message' => 'Purchase is already processed'], 401); }
 
         $status=DB::table('purchases')->where(['id'=>$id,'status'=>'pending'])->update(['status'=>'deactivated']);
 
@@ -284,6 +325,9 @@ class adminController extends Controller
         if(!$user){
             return response()->json(['message' => 'User not authenticated'], 401);
         }
+
+        $current_status=DB::table('purchases')->where(['id'=>$id])->first();
+        if($current_status->status!='deactivated'){ return response()->json(['message' => 'Purchase status is not deactivated'], 401); }
 
         $status=DB::table('purchases')->where(['id'=>$id,'status'=>'deactivated'])->update(['status'=>'pending']);
 
@@ -343,5 +387,38 @@ class adminController extends Controller
         if(DB::table('users')->where(['id'=>$user->id])->update(['password'=>Hash::make($request->new_password)])){ return response()->json(['message' => 'Password updated successfully'], 200); }
         else{ return response()->json(['message' => 'Unable to update password'], 401); }
 
+    }
+
+    //Verification functions
+    public function verify_user(Request $request,$id){
+        $user = Auth::guard('sanctum')->user();
+
+        if(!$user){
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+
+        $current_status=DB::table('users')->where('id',$id)->get();
+        if($current_status->status=='deactived'){ return response()->json(['message' => 'User account is deactivated'], 401); }
+        if($current_status->status=='verified'){ return response()->json(['message' => 'User is already verified'], 401); }
+        if($current_status->role=='admin'){ return response()->json(['message' => 'Unable to update admin account'], 401); }
+
+        $status=DB::table('user')->where('id',$id)->update(['status'=>'verified']);
+        if($status){ return response()->json(['message' => 'Account successfully updated'], 200); }
+        else{  return response()->json(['message' => 'Unable to update account'], 401);  }
+    }
+
+    public function unverify_user(Request $request,$id){
+        $user = Auth::guard('sanctum')->user();
+
+        if(!$user){
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+
+        if($current_status->status=='deactived'){ return response()->json(['message' => 'User account is deactivated'], 401); }
+        if($current_status->role=='admin'){ return response()->json(['message' => 'Unable to update admin account'], 401); }
+
+        $status=DB::table('user')->where('id',$id)->update(['status'=>'active']);
+        if($status){ return response()->json(['message' => 'Account successfully updated'], 200); }
+        else{  return response()->json(['message' => 'Unable to update account'], 401);  }
     }
 }

@@ -5,8 +5,10 @@ import axios from 'axios';
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import { useParams } from 'react-router-dom';
 
 const AdminViewPurchases = () => {
+  const { id } = useParams();  // getting id from URL params
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
@@ -97,7 +99,7 @@ const AdminViewPurchases = () => {
         return;
       }
   
-      const response = await axios.get('http://localhost:8000/api/admin/donations', {
+      const response = await axios.get(`http://localhost:8000/api/purchases_by_donation/${id}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
