@@ -212,4 +212,15 @@ class UserController extends Controller
             return response()->json(['message' => 'Token validation error'], 500);
         }
     }
+    public function userrole(Request $request){
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Invalid token'], 401);
+        }
+
+        $role=$user->role;
+
+        return response()->json(['message' => $role], 200);
+    }
 }

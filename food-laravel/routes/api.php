@@ -24,6 +24,7 @@ Route::post('/signup', [UserController::class, 'signup']);
 
 // Route for user login
 Route::post('/login', [UserController::class, 'login']);
+Route::get('/user-role', [UserController::class, 'userrole'])->middleware('auth:sanctum');
 
 // Route for user logout, accessible only for authenticated users
 Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
