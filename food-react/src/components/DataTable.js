@@ -10,6 +10,7 @@ import {
   TableSortLabel,
   TablePagination,
   TextField,
+  TableContainer,
 } from '@mui/material';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 
@@ -79,6 +80,7 @@ const DataTable = ({ columns, rows, actionButton, detailPageLink, actionButtonTe
         onChange={handleSearch}
         sx={{ marginBottom: '1rem' }}
       />
+       <TableContainer style={{maxWidth: '100%', overflowX: 'auto'}}>
       <Table>
         <TableHead>
           <TableRow>
@@ -129,6 +131,7 @@ const DataTable = ({ columns, rows, actionButton, detailPageLink, actionButtonTe
           ))}
         </TableBody>
       </Table>
+      </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
