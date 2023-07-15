@@ -285,4 +285,57 @@ class adminController extends Controller
         if($status){ return response()->json(['message' => 'Purchase updated successfully'], 200); }
         else{ return response()->json(['message' => 'Unable to update purchase'], 401); }
     }
+
+    //Create random password
+    public static function quickRandom($length = 16)
+    {
+        $pool = '123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';
+
+        return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
+    }
+
+    public function create_charity_account(Request $request){
+        $password=$this->quickRandom();
+        $user = Auth::guard('sanctum')->user();
+
+        if(!$user){
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+
+        $validate=$request->validate([
+            'name' => 'required',
+            'mobile' => 'required',
+            'email' => 'required|email|unique:users,email,',
+            'whatsapp' => 'nullable',
+            'address' => 'required',
+            'pincode' => 'required'
+        ]);
+        $validated['role']='charity';
+        $validated['password']=Hash::make($password);
+        $results=DB::table('users')->insertGetId($validate);
+
+        if($results>0){ return response()->json(['message' => 'Charity added successfully'], 200); }
+        else{ return response()->json(['message' => 'Unable to add charity'], 401); }
+    }
+
+    public function changePassword(Request $request){
+        $user = Auth::guard('sanctum')->user();
+
+        if(!$user){
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+
+        // Validate the request data
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8',
+        ]);
+        // Verify the current password
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Current password is incorrect.'], 401);
+        }
+
+        if(DB::table('users')->where(['id'=>$user->id])->update(['password'=>Hash::make($request->new_password)])){ return response()->json(['message' => 'Password updated successfully'], 200); }
+        else{ return response()->json(['message' => 'Unable to update password'], 401); }
+    }
 }

@@ -52,6 +52,9 @@ Route::get('/donation-activate/{id}', [adminController::class, 'activate_donatio
 Route::get('/purchase-deactivate/{id}', [adminController::class, 'deactivate_purchase'])->middleware('auth:sanctum');
 Route::get('/purchase-activate/{id}', [adminController::class, 'activate_purchase'])->middleware('auth:sanctum');
 
+Route::post('/create_charity', [adminController::class, 'create_charity_account'])->middleware('auth:sanctum');
+Route::post('/admin_password_change', [adminController::class, 'changePassword'])->middleware('auth:sanctum');
+
 // Route to fetch application settings
 Route::get('/test/re', [FoodDonationsController::class, 'donation_list'])->middleware('auth:sanctum');
 Route::get('/settings', [SettingsController::class, 'getSettings']);
