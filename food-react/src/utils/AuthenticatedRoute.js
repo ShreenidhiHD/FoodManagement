@@ -5,6 +5,7 @@ import axios from 'axios';
 function AuthenticatedRoute({ children }) {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('authToken'));
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     const validateToken = async () => {
@@ -22,6 +23,8 @@ function AuthenticatedRoute({ children }) {
       } catch (error) {
         setIsLoggedIn(false);
         localStorage.removeItem('authToken');
+      } finally {
+        setIsLoading(false); // Done loading after validation
       }
     };
 
@@ -29,11 +32,16 @@ function AuthenticatedRoute({ children }) {
     validateToken();
 
     // Set up interval to validate every minute
-    const interval = setInterval(validateToken, 60000); // 60000 milliseconds = 1 minute
+    const interval = setInterval(validateToken, 10000); // 60000 milliseconds = 1 minute
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(interval);
   }, []);
+
+  // Show loading indicator while waiting for the token validation to complete
+  if (isLoading) {
+    return <div>Loading...</div>; // Replace with a proper loading indicator in your app
+  }
 
   if (!isLoggedIn) {
     return <Navigate to="/login" state={{ from: location }} />;

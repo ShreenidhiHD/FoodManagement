@@ -218,7 +218,7 @@ class FoodDonationsController extends Controller
                 'to' => 'shreenidhishree34@gmail.com',
                 'subject' => 'Donation Updated',
                 'data' => [
-                    'name' => 'John Doe',
+                    'name' => $donation->id,
                     'message' => 'The donation has been updated. Donation ID: ' . $donation->id,
                 ],
             ];
