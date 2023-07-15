@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Donation;
 use App\Models\Purchase;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -52,7 +53,23 @@ class FoodDonationsController extends Controller
     
         // Create new Donation
         $donation = Donation::create($validated);
-
+        try {
+            // Send email notification
+            $emailData = [
+                'to' => $user->email,
+                'subject' => 'Donation Entry Created for: ' . $donation->event_name,
+                'data' => [
+                    'name' => $user->name,
+                    'message' => 'You have successfully created a donation entry for the event <b>'. $donation->event_name . '</b> at <b>' . $donation->created_at . '</b>. Thank you for your generous contribution to help reduce food waste. Your Donation ID is: <b>' . $donation->id . '</b>',
+                ],
+            ];
+                      
+            
+            EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+        } catch (\Exception $e) {
+            // Log the exception or handle it in another way
+            \Log::error('Failed to send email: '.$e->getMessage());
+        }
         // Return a response...
         return response()->json([
             'message' => 'Food donation created successfully.',
@@ -195,6 +212,11 @@ class FoodDonationsController extends Controller
     public function update(Request $request, $id)
     {
         // Validation...
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+    
         $validated = $request->validate([
             'number_of_plates' => 'required|integer',
             'location' => 'required|string',
@@ -214,10 +236,8 @@ class FoodDonationsController extends Controller
 
         // Get the donation from the database
         $donation = Donation::find($id);
+        $user = User::find($donation->Created_by);
 
-        if (!$donation) {
-            return response()->json(['message' => 'Donation not found'], 404);
-        }
 
         // Update the donation
         $donation->update($validated);
@@ -225,13 +245,14 @@ class FoodDonationsController extends Controller
         try {
             // Send email notification
             $emailData = [
-                'to' => 'example@gmail.com',
-                'subject' => 'Donation Updated',
+                'to' => $user->email,
+                'subject' => 'Your Donation Entry for ' . $donation->event_name . ' Has Been Updated',
                 'data' => [
-                    'name' => $donation->id,
-                    'message' => 'The donation has been updated. Donation ID: ' . $donation->id,
+                    'name' => $user->name,
+                    'message' => 'You have successfully updated your donation entry for the event <b>'. $donation->event_name . '</b> at '. $donation->updated_at . ' <b>' . $donation->updated_at . '</b>. Your updated donation contributes significantly to our effort to reduce food waste. The reference for your updated donation is: <b>' . $donation->id . '</b>',
                 ],
             ];
+              
             
             EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
         } catch (\Exception $e) {
