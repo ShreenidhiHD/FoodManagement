@@ -8,7 +8,6 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
 const AdminDashboard = () => {
-  const notificationCounts = 3; // Default notification count
 
   return (
     <Container sx={{ marginTop: '2rem' }}>
@@ -27,7 +26,7 @@ const AdminDashboard = () => {
                 to="/adminusers"
                 variant="contained"
                 fullWidth
-                sx={{ bgcolor: '#FF5722', color: '#FFF' }}
+                sx={{ bgcolor: '#3f51b5', color: '#FFF' }} // Blue color
               >
                 View
               </Button>
@@ -49,9 +48,53 @@ const AdminDashboard = () => {
                 to="/admindonations"
                 variant="contained"
                 fullWidth
-                sx={{ bgcolor: '#FF5722', color: '#FFF' }}
+                sx={{ bgcolor: '#4caf50', color: '#FFF' }} // Green color
               >
                 View
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Verify
+              </Typography>
+              <Typography sx={{ mb: 2 }}>
+                Manage and view Users.
+              </Typography>
+              <Button
+                component={Link}
+                to="/AdminVerifyUsers"
+                variant="contained"
+                fullWidth
+                sx={{ bgcolor: '#ff9800', color: '#FFF' }} // Orange color
+              >
+                View
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Charity
+              </Typography>
+              <Typography sx={{ mb: 2 }}>
+                Manage and view Charity.
+              </Typography>
+              <Button
+                component={Link}
+                to="/AdminCharity"
+                variant="contained"
+                fullWidth
+                sx={{ bgcolor: '#f44336', color: '#FFF' }} // Red color
+              >
+                Create
               </Button>
             </CardContent>
           </Card>

@@ -126,6 +126,10 @@ const AdminDonations = () => {
     }
     else if(row.status === 'Completed'){
       return 'Completed';
+      
+    }
+    else if(row.status === 'Hidden'){
+     return 'Hidden';
     }
     else if(row.status === 'Expired'){
       return 'Expired';
@@ -134,10 +138,6 @@ const AdminDonations = () => {
       return null;
     }
   };
-  
-  
-  
-
   return (
     
       <Card>

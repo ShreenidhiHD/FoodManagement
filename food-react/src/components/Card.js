@@ -22,6 +22,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
+import Chip from '@mui/material/Chip';
 
 const RequestButton = styled(Button)`
   color: white;
@@ -243,9 +244,11 @@ const RecipeReviewCard = ({ item }) => {
   subheader={item.prepared_date}
 />
 
-      <Typography variant="subtitle2" color="text.secondary" align="right">
-        {item.verified ? 'verified' : ''}
-      </Typography>
+
+<Box display="flex" justifyContent="flex-end" style={{ marginRight: '50px' }}>
+    {item.verified && <Chip label="Verified" color="primary" size="small" />}
+</Box>
+
       <CardContent>
         <Typography variant="body2" color="text.secondary">
           Food type: {item.food_type} <br />

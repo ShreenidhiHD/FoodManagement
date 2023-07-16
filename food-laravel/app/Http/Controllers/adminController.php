@@ -346,11 +346,11 @@ class adminController extends Controller
     public function create_charity_account(Request $request){
         $password=$this->quickRandom();
         $user = Auth::guard('sanctum')->user();
-
+    
         if(!$user){
             return response()->json(['message' => 'User not authenticated'], 401);
         }
-
+    
         $validate=$request->validate([
             'name' => 'required',
             'mobile' => 'required',
@@ -359,13 +359,32 @@ class adminController extends Controller
             'address' => 'required',
             'pincode' => 'required'
         ]);
-        $validated['role']='charity';
-        $validated['password']=Hash::make($password);
+        $validate['role']='charity';
+        $validate['password']=Hash::make($password);
         $results=DB::table('users')->insertGetId($validate);
-
-        if($results>0){ return response()->json(['message' => 'Charity added successfully'], 200); }
-        else{ return response()->json(['message' => 'Unable to add charity'], 401); }
+    
+        if($results>0){ 
+            try {
+                // send password by email
+                $emailData = [
+                    'to' => $validate['email'],
+                    'subject' => 'Your Charity Account Password',
+                    'data' => [
+                        'name' => $validate['name'],
+                        'message' => 'Your charity account has been created successfully. Your password is: ' . $password .'We are requesting you please change your password soon you see this email THank you.' ,
+                    ],
+                ];
+                
+                EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+            } catch (\Exception $e) {
+                \Log::error('Failed to send email: '.$e->getMessage());
+            }
+    
+            return response()->json(['message' => 'Charity added successfully'], 200); 
+        }
+        else{ return response()->json(['message' => 'Unable to add charity'], 422); }
     }
+    
 
     public function changePassword(Request $request){
         $user = Auth::guard('sanctum')->user();
@@ -390,35 +409,97 @@ class adminController extends Controller
     }
 
     //Verification functions
+    // public function verify_user(Request $request,$id){
+    //     $user = Auth::guard('sanctum')->user();
+
+    //     if(!$user){
+    //         return response()->json(['message' => 'User not authenticated'], 401);
+    //     }
+
+    //     $current_status=DB::table('users')->where('id',$id)->get();
+    //     if($current_status->status=='deactived'){ return response()->json(['message' => 'User account is deactivated'], 401); }
+    //     if($current_status->status=='verified'){ return response()->json(['message' => 'User is already verified'], 401); }
+    //     if($current_status->role=='admin'){ return response()->json(['message' => 'Unable to update admin account'], 401); }
+
+    //     $status=DB::table('user')->where('id',$id)->update(['status'=>'verified']);
+    //     if($status){ return response()->json(['message' => 'Account successfully updated'], 200); }
+    //     else{  return response()->json(['message' => 'Unable to update account'], 401);  }
+    // }
+
     public function verify_user(Request $request,$id){
         $user = Auth::guard('sanctum')->user();
-
+    
         if(!$user){
             return response()->json(['message' => 'User not authenticated'], 401);
         }
-
-        $current_status=DB::table('users')->where('id',$id)->get();
-        if($current_status->status=='deactived'){ return response()->json(['message' => 'User account is deactivated'], 401); }
-        if($current_status->status=='verified'){ return response()->json(['message' => 'User is already verified'], 401); }
-        if($current_status->role=='admin'){ return response()->json(['message' => 'Unable to update admin account'], 401); }
-
-        $status=DB::table('user')->where('id',$id)->update(['status'=>'verified']);
-        if($status){ return response()->json(['message' => 'Account successfully updated'], 200); }
-        else{  return response()->json(['message' => 'Unable to update account'], 401);  }
+    
+        $current_status=DB::table('users')->where('id',$id)->first(); // Use first() instead of get()
+        if(!$current_status){ // Check if the user exists
+            return response()->json(['message' => 'User not found'], 404);
+        }
+    
+        if($current_status->status=='deactived'){ 
+            return response()->json(['message' => 'User account is deactivated'], 401); 
+        }
+        if($current_status->status=='verified'){ 
+            return response()->json(['message' => 'User is already verified'], 401); 
+        }
+        if($current_status->role=='admin'){ 
+            return response()->json(['message' => 'Unable to update admin account'], 401); 
+        }
+    
+        $status=DB::table('users')->where('id',$id)->update(['status'=>'verified']); // Make sure table name is correct
+        if($status){ 
+            return response()->json(['message' => 'Account successfully updated'], 200); 
+        }
+        else{  
+            return response()->json(['message' => 'Unable to update account'], 401);  
+        }
     }
+    
 
-    public function unverify_user(Request $request,$id){
+    // public function unverify_user(Request $request,$id){
+    //     $user = Auth::guard('sanctum')->user();
+
+    //     if(!$user){
+    //         return response()->json(['message' => 'User not authenticated'], 401);
+    //     }
+
+    //     if($current_status->status=='deactived'){ return response()->json(['message' => 'User account is deactivated'], 401); }
+    //     if($current_status->role=='admin'){ return response()->json(['message' => 'Unable to update admin account'], 401); }
+
+    //     $status=DB::table('user')->where('id',$id)->update(['status'=>'active']);
+    //     if($status){ return response()->json(['message' => 'Account successfully updated'], 200); }
+    //     else{  return response()->json(['message' => 'Unable to update account'], 401);  }
+    // }
+    public function unverify_user(Request $request, $id){
         $user = Auth::guard('sanctum')->user();
-
+    
         if(!$user){
             return response()->json(['message' => 'User not authenticated'], 401);
         }
-
-        if($current_status->status=='deactived'){ return response()->json(['message' => 'User account is deactivated'], 401); }
-        if($current_status->role=='admin'){ return response()->json(['message' => 'Unable to update admin account'], 401); }
-
-        $status=DB::table('user')->where('id',$id)->update(['status'=>'active']);
-        if($status){ return response()->json(['message' => 'Account successfully updated'], 200); }
-        else{  return response()->json(['message' => 'Unable to update account'], 401);  }
+    
+        $current_status = DB::table('users')->where('id', $id)->first();
+        
+        if(!$current_status){
+            return response()->json(['message' => 'User not found'], 404);
+        }
+    
+        if($current_status->status=='deactived'){
+            return response()->json(['message' => 'User account is deactivated'], 401);
+        }
+        if($current_status->role=='admin'){
+            return response()->json(['message' => 'Unable to update admin account'], 401);
+        }
+    
+        $status = DB::table('users')->where('id', $id)->update(['status' => 'active']);
+        
+        if($status){
+            return response()->json(['message' => 'Account successfully updated'], 200);
+        }
+        else{
+            return response()->json(['message' => 'Unable to update account'], 401);
+        }
     }
+    
 }

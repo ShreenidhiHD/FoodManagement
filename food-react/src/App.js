@@ -23,6 +23,8 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import AdminUsers from './pages/Admin/AdminUsers';
 import AdminDonations from './pages/Admin/AdminDonations';
 import AdminViewPurchases from './pages/Admin/AdminViewPurchases';
+import AdminVerifyUsers from './pages/Admin/AdminVerifyUsers';
+import AdminCharity from './pages/Admin/AdminCharity';
 // The App component wraps the entire application and sets up routing for all pages.
 // It also provides settings to all components using the SettingsProvider.
 function App() {
@@ -53,6 +55,9 @@ function App() {
             <Route path="/adminusers" element={<AuthenticatedRoute><AdminUsers /></AuthenticatedRoute>} />
             <Route path="/admindonations" element={<AuthenticatedRoute><AdminDonations /></AuthenticatedRoute>} />
             <Route path="/adminviewpurchases/:id" element={<AuthenticatedRoute><AdminViewPurchases /></AuthenticatedRoute>} />
+            <Route path="/adminverifyusers" element={<AuthenticatedRoute><AdminVerifyUsers /></AuthenticatedRoute>} />
+            <Route path="/admincharity" element={<AuthenticatedRoute><AdminCharity /></AuthenticatedRoute>} />
+            
           </Routes>
         </div>
       </Router>
