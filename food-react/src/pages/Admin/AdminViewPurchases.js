@@ -118,10 +118,26 @@ const AdminViewPurchases = () => {
       </Button>
       
     }
-    else{
+    else if((row.status === 'deactivated')){
       return <Button variant="contained" size="small" component={Link}  onClick={() => handleActivateClick(row)}>  Active</Button>
-     
     }
+    else if (row.status === 'Cancelled') {
+      return 'Cancelled';
+    } else if (row.status === 'rejected') {
+      return 'Rejected';
+    } else if (row.status === 'accepted') {
+      return 'Accepted';
+    }
+    else if (row.status === 'expired') {
+    return 'Accepted';
+   }
+   else if (row.status === 'completed') {
+    return 'Accepted';
+   }
+     else {
+      return null;
+    }
+
   };
   
 
