@@ -4,8 +4,12 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
 import { format } from 'date-fns';
+import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 function ViewDonation() {
+  const navigate = useNavigate();
+  const [serverStatus, setServerStatus] = useState('');
   const { id } = useParams();  // getting id from URL params
   const [numberOfPlates, setNumberOfPlates] = useState('');
   const [location, setLocation] = useState('');
@@ -25,6 +29,7 @@ function ViewDonation() {
   const [messageType, setMessageType] = useState('success');
 
   useEffect(() => {
+    
     const fetchDonation = async () => {
       try {
         const authToken = localStorage.getItem('authToken');
@@ -51,26 +56,46 @@ function ViewDonation() {
             setEventName(donation.event_name);
             setDescription(donation.description);
             setPreparedDate(donation.prepared_date);
-            setStatus(donation.status);
             setCity(donation.city);
             setCountry(donation.country);
             setState(donation.state);
             setPincode(donation.pincode);
+            if (donation.status === 'deactive') {
+              setStatus('hidden');
+            } else {
+              setStatus(donation.status);
+            }
         } else {
           // Handle error
           console.error('Error:', response);
         }
       } catch (error) {
-        console.error('Error:', error);
+        if (error.response) {
+          console.error( error.response.data.message);
+          toast.error('Failed to deactivate: ' + error.response.data.message);
+
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log(error.request);
+          toast.error('Failed to deactivate: No response from server');
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+          
+        }
+        setTimeout(() => {
+          navigate(-1); // This will navigate to the previous page in the history stack.
+      }, 5000);
       }
     };
 
     fetchDonation();
+    
   }, [id]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+    
     const updatedData = {
       number_of_plates: parseInt(numberOfPlates),
       location,
@@ -81,13 +106,13 @@ function ViewDonation() {
       event_name: eventName,
       description,
       prepared_date: preparedDate,
-      status,
+      status: status === 'hidden' ? 'hidden' : status,
       country,
       state,
       city,
       pincode,
     };
-  
+  console.log(updatedData);
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
       // Handle unauthenticated state
@@ -185,7 +210,8 @@ function ViewDonation() {
                     onChange={(e) => setStatus(e.target.value)}
                     >
                     <MenuItem value="active">Active</MenuItem>
-                    <MenuItem value="deactive">Deactive</MenuItem>
+                    <MenuItem value="hidden">Hidden</MenuItem>
+                    <MenuItem value="completed">Completed</MenuItem>
                     </Select>
                 </FormControl>
                 </Grid>
@@ -212,6 +238,7 @@ function ViewDonation() {
             </Grid>
             </form>
         </CardContent>
+        <ToastContainer position="top-center" />
       </Card>
     </div>
   );

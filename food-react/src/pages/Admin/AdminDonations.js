@@ -30,24 +30,26 @@ const AdminDonations = () => {
 
       console.log(response.data); // Check the response data
 
-      if (response.data.message === "User account updated successfully") {
-        const rowIndex = rows.findIndex(row => row.id === item.id);
-
-      // Create a new array for the updated rows
-      const newRows = [...rows];
-
-      // Update the status of the item to "Rejected"
-      newRows[rowIndex] = {...newRows[rowIndex], status: 'Deactivate'};
-
-      // Set the newRows array as the new rows state
-      setRows(newRows);
-        toast.success(`Deactivated Successfully`);
+      if (response.data.message === "Donation updated successfully") {
+        fetchData().then(() => {
+          toast.success(`Deactivation done Successfully`);
+        })
+       
       } else {
         toast.error(response.data.message || 'failed to Deactivate');
       }
     } catch (error) {
-      console.error(error);
-      toast.error('failed to Deactivate');
+      if (error.response) {
+        toast.error('Failed to deactivate: ' + error.response.data.message);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log(error.request);
+        toast.error('Failed to deactivate: No response from server');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+        toast.error('Failed to deactivate: ' + error.message);
+      }
     }
   };
 
@@ -67,18 +69,11 @@ const AdminDonations = () => {
 
       console.log(response.data); // Check the response data
 
-      if (response.data.message === "User account updated successfully") {
-        const rowIndex = rows.findIndex(row => row.id === item.id);
-
-      // Create a new array for the updated rows
-      const newRows = [...rows];
-
-      // Update the status of the item to "Rejected"
-      newRows[rowIndex] = {...newRows[rowIndex], status: 'Active'};
-
-      // Set the newRows array as the new rows state
-      setRows(newRows);
-        toast.success(`Activation done Successfully`);
+      if (response.data.message === "Donation updated successfully") {
+        fetchData().then(() => {
+          toast.success(`Activation done Successfully`);
+        })
+       
       } else {
         toast.error(response.data.message || 'Acivation failed');
       }
@@ -111,22 +106,36 @@ const AdminDonations = () => {
   };
   const actionButton = (row) => {
     if (row.status === 'Active'){
-      return <div><Button variant="contained" size="small" component={Link}   onClick={() => handleDeactivateClick(row)}>
-        Deactive
-      </Button>
-      <Button variant="contained" size="small" component={Link}  to={`/adminviewpurchases/${row.id}`}>
-        View
-      </Button>
+      return <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button variant="contained" size="small" onClick={() => handleDeactivateClick(row)} style={{ marginRight: '10px' }}>
+          Deactivate
+        </Button>
+        <Button variant="contained" size="small" component={Link}  to={`/adminviewpurchases/${row.id}`}>
+          View
+        </Button>
+      </div>  
+    } else if (row.status === 'Deactive'){
+      return <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button variant="contained" size="small" onClick={() => handleActivateClick(row)} style={{ marginRight: '10px' }}>  
+          Active
+        </Button>
+        <Button variant="contained" size="small" component={Link}  to={`/adminviewpurchases/${row.id}`} >
+          View
+        </Button>
       </div>
+    }
+    else if(row.status === 'Completed'){
+      return 'Completed';
+    }
+    else if(row.status === 'Expired'){
+      return 'Expired';
     }
     else{
-      return <div><Button variant="contained" size="small" component={Link}  onClick={() => handleActivateClick(row)}>  Active</Button>
-      <Button variant="contained" size="small" component={Link}  to={`/adminviewpurchases/${row.id}`} >
-        View
-      </Button>
-      </div>
+      return null;
     }
   };
+  
+  
   
 
   return (
@@ -136,6 +145,7 @@ const AdminDonations = () => {
             <h1 className='text-center'>Donations</h1>
             <DataTable columns={columns} rows={rows} actionButton={actionButton} />
         </CardContent>
+        <ToastContainer position="top-center" />
       </Card>
   
   );
