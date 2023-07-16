@@ -5,6 +5,7 @@ import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Avatar from '@mui/material/Avatar';
+import { Container, Grid, Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
@@ -39,6 +40,15 @@ const RecipeReviewCard = ({ item }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [description, setDescription] = useState('');
 
+  const [openDetails, setOpenDetails] = useState(false);
+
+  const handleClickOpenDetails = () => {
+    setOpenDetails(true);
+  };
+
+  const handleCloseDetails = () => {
+    setOpenDetails(false);
+  };
   const handleRequestClick = async () => {
     setOpenDialog(true);
   };
@@ -183,10 +193,10 @@ const RecipeReviewCard = ({ item }) => {
         </DialogActions>
       </Dialog>
       <CardHeader
-  avatar={
-    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-      R
-    </Avatar>
+        avatar={
+          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+            {item.username.charAt(0).toUpperCase()}
+          </Avatar>
   }
   action={
     <>
@@ -243,6 +253,66 @@ const RecipeReviewCard = ({ item }) => {
           Location: {item.location}
         </Typography>
       </CardContent>
+      <Dialog open={openDetails}
+  onClose={handleCloseDetails}
+  PaperProps={{style: {width: "600px"}}} >
+        <DialogTitle>{"Donation Details"}</DialogTitle>
+  <DialogContent>
+  <Grid container spacing={1}>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">
+              <b>Food type:</b> {item.food_type} 
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">
+              <b>Number of plates:</b> {item.number_of_plates} 
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">
+              <b>Location:</b> {item.location}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">
+              <b>Delivery Status:</b> {item.delivery_status}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">
+              <b>Price:</b> {item.price}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">
+              <b>Expiry in days:</b> {item.expiry_in_days}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">
+              <b>Event Name:</b> {item.event_name}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body2" color="text.secondary">
+              <b>Description:</b> {item.description}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body2" color="text.secondary">
+              <b>Address:</b> {item.city}, {item.state}, {item.country}, {item.pincode}
+            </Typography>
+          </Grid>
+        </Grid>
+  </DialogContent>
+        
+        <DialogActions>
+          <Button onClick={handleCloseDetails}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
       <CardActions disableSpacing>
       {buttonStatus === 'donater' ? (
         <Typography variant="body1" color="text.primary">
@@ -282,6 +352,17 @@ const RecipeReviewCard = ({ item }) => {
 >
   <ShareIcon />
 </IconButton>
+<Button
+  variant="contained"
+  style={{ 
+    marginRight: '10px',
+    backgroundColor: 'white',
+    color: 'black'
+  }}
+  onClick={handleClickOpenDetails}
+>
+  Show Details
+</Button>
 
 </CardActions>
 

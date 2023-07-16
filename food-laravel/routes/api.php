@@ -21,11 +21,9 @@ use App\Http\Controllers\adminController;
 
 // Route for user registration
 Route::post('/signup', [UserController::class, 'signup']);
-
 // Route for user login
 Route::post('/login', [UserController::class, 'login']);
 Route::get('/user-role', [UserController::class, 'userrole'])->middleware('auth:sanctum');
-
 // Route for user logout, accessible only for authenticated users
 Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
 Route::middleware('auth:sanctum')->get('/validate-token',[UserController::class, 'validateToken']);
@@ -43,12 +41,10 @@ Route::get('/user-requests', [PurchaseController::class, 'userPendingPurchases']
 Route::get('/donations/requests/{id}', [PurchaseController::class, 'user_donation_request'])->middleware('auth:sanctum');
 Route::get('/purchase/requests_cancel/{id}', [PurchaseController::class, 'cancelRequest'])->middleware('auth:sanctum');
 Route::get('/purchase/requests_accept/{id}', [PurchaseController::class, 'acceptRequest'])->middleware('auth:sanctum');
-
 //Admin routes
 Route::get('/admin/users', [adminController::class, 'users'])->middleware('auth:sanctum');
 Route::get('/admin/donations', [adminController::class, 'donations'])->middleware('auth:sanctum');
 Route::get('/purchases_by_donation/{donation_id}', [adminController::class, 'get_purchase_by_donations'])->middleware('auth:sanctum');
-
 Route::get('/user-deactivate/{id}', [adminController::class, 'deactivate_user'])->middleware('auth:sanctum');
 Route::get('/user-activate/{id}', [adminController::class, 'activate_user'])->middleware('auth:sanctum');
 Route::get('/donation-deactivate/{id}', [adminController::class, 'deactivate_donation'])->middleware('auth:sanctum');
