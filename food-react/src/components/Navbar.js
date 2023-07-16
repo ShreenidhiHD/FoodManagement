@@ -10,12 +10,14 @@ import { SettingsContext } from '../server/SettingsProvider';
 import Logout from './Logout';
 import DonateButton from './DonateButton';
 import DashboardButton from './DashboardButton';
+import AdminButton from './AdminButton';
+
 
 const ResponsiveAppBar = () => {
   const settings = useContext(SettingsContext);
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('authToken') !== null);
-  
+  const [userRole, setUserRole] = useState(null);
   const restrictedRoutes = ['/login', '/signup', '/'];
   const restrictedPages = [
     { name: 'Home', path: '/' },
@@ -32,6 +34,33 @@ const ResponsiveAppBar = () => {
     { name: 'Profile', path: '/userprofile' },
   ];
 
+  const getUserRole = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/user-role`, { 
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setUserRole(data.message); // assuming response is an object containing a 'role' property
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      getUserRole();
+    }
+  }, [isLoggedIn]);
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
@@ -73,12 +102,13 @@ const ResponsiveAppBar = () => {
             {restrictedRoutes.includes(location.pathname) ? renderPages(restrictedPages) : renderPages(unrestrictedPages)}
           </Box>
           {isLoggedIn && !restrictedRoutes.includes(location.pathname) && (
-            <>
-              <DashboardButton/>
-              <DonateButton/>
-              <Logout onLogout={handleLogout} />
-            </>
-          )}
+        <>
+          {userRole === 'admin' && <AdminButton/>} {/* hypothetical AdminButton component */}
+          <DashboardButton/>
+          {userRole !== 'charity' && <DonateButton/>}
+          <Logout onLogout={handleLogout} />
+        </>
+      )}
         </Toolbar>
       </Container>
     </AppBar>

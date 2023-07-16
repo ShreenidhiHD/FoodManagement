@@ -12,6 +12,7 @@ use Illuminate\Database\QueryException;
 use App\Helpers\EmailHelper;
 use PDOException;
 use DB;
+use Auth;
 
 class FoodDonationsController extends Controller
 {
@@ -200,15 +201,20 @@ class FoodDonationsController extends Controller
     
 
     public function show($id)
-    {
-        $donation = Donation::find($id);
-    
-        if (!$donation) {
-            return response()->json(['message' => 'Donation not found'], 404);
-        }
-    
-        return response()->json(['donation' => $donation], 200);
+{
+    $donation = Donation::find($id);
+
+    if (!$donation) {
+        return response()->json(['message' => 'Donation not found'], 404);
     }
+
+    if ($donation->status === 'deactive') {
+        return response()->json(['message' => 'This donation is currently deactivated'], 403);
+    }
+
+    return response()->json(['donation' => $donation], 200);
+}
+
     public function update(Request $request, $id)
     {
         // Validation...
@@ -216,7 +222,10 @@ class FoodDonationsController extends Controller
         if (!$user) {
             return response()->json(['message' => 'User not authenticated'], 401);
         }
-    
+        $donation = Donation::find($id);
+        if ($donation->status === 'deactive') {
+            return response()->json(['message' => 'This donation is currently deactivated'], 403);
+        }
         $validated = $request->validate([
             'number_of_plates' => 'required|integer',
             'location' => 'required|string',

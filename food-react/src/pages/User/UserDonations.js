@@ -34,10 +34,14 @@ const UserDonations = () => {
     }
   };
   const actionButton = (row) => {
+    if (row.status ==='deactive'){
+      return 'Deactivated By Admin'
+    }
+    else{
       return <Button variant="contained" size="small" component={Link} to={`/donations/${row.id}`}>
         View
       </Button>
-    
+    }
   }
   return (
     <Container sx={{ marginTop: '2rem' }}>
