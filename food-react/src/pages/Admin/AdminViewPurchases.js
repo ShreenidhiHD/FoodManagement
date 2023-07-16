@@ -31,25 +31,35 @@ const AdminViewPurchases = () => {
       });
 
       console.log(response.data); // Check the response data
-
-      if (response.data.message === "User account updated successfully") {
+      var message = response.data.message;
+      if (response.data.message === "Purchase updated successfully") {
         const rowIndex = rows.findIndex(row => row.id === item.id);
 
       // Create a new array for the updated rows
       const newRows = [...rows];
 
       // Update the status of the item to "Rejected"
-      newRows[rowIndex] = {...newRows[rowIndex], status: 'Deactivate'};
+      newRows[rowIndex] = {...newRows[rowIndex], status: 'Deactivated'};
 
       // Set the newRows array as the new rows state
       setRows(newRows);
         toast.success(`Deactivated Successfully`);
-      } else {
-        toast.error(response.data.message || 'failed to Deactivate');
-      }
+      } 
+       else {
+         
+          toast.error('Failed to deactivate: ');}
     } catch (error) {
-      console.error(error);
-      toast.error('failed to Deactivate');
+      if (error.response) {
+        toast.error('Failed to deactivate: ' + error.response.data.message);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log(error.request);
+        toast.error('Failed to deactivate: No response from server');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+        toast.error('Failed to deactivate: ' + error.message);
+      }
     }
   };
 
@@ -69,18 +79,11 @@ const AdminViewPurchases = () => {
 
       console.log(response.data); // Check the response data
 
-      if (response.data.message === "User account updated successfully") {
-        const rowIndex = rows.findIndex(row => row.id === item.id);
-
-      // Create a new array for the updated rows
-      const newRows = [...rows];
-
-      // Update the status of the item to "Rejected"
-      newRows[rowIndex] = {...newRows[rowIndex], status: 'Active'};
-
-      // Set the newRows array as the new rows state
-      setRows(newRows);
-        toast.success(`Activation done Successfully`);
+      if (response.data.message === "Purchase updated successfully") {
+        fetchData().then(() => {
+          toast.success(`Activation done Successfully`);
+        })
+       
       } else {
         toast.error(response.data.message || 'Acivation failed');
       }
@@ -112,27 +115,28 @@ const AdminViewPurchases = () => {
     }
   };
   const actionButton = (row) => {
-    if (row.status === 'Active'){
+    if (row.status === 'Active'  || row.status === 'Pending' || row.status === 'Cancelled'){
       return <Button variant="contained" size="small" component={Link}   onClick={() => handleDeactivateClick(row)}>
         Deactive
       </Button>
       
     }
-    else if((row.status === 'deactivated')){
+    else if((row.status === 'Deactivated')){
       return <Button variant="contained" size="small" component={Link}  onClick={() => handleActivateClick(row)}>  Active</Button>
     }
-    else if (row.status === 'Cancelled') {
-      return 'Cancelled';
-    } else if (row.status === 'rejected') {
+    // else if (row.status === 'Cancelled') {
+    //   return 'Cancelled';
+    // }
+     else if (row.status === 'Rejected') {
       return 'Rejected';
-    } else if (row.status === 'accepted') {
+    } else if (row.status === 'Accepted') {
       return 'Accepted';
     }
-    else if (row.status === 'expired') {
-    return 'Accepted';
+    else if (row.status === 'Expired') {
+    return 'Expired';
    }
-   else if (row.status === 'completed') {
-    return 'Accepted';
+   else if (row.status === 'Completed') {
+    return 'Completed';
    }
      else {
       return null;
@@ -148,6 +152,7 @@ const AdminViewPurchases = () => {
             <h1 className='text-center'>Purchases</h1>
             <DataTable columns={columns} rows={rows} actionButton={actionButton} />
         </CardContent>
+        <ToastContainer position="top-center" />
       </Card>
   
   );
