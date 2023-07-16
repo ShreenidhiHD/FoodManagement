@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use PDOException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use App\Helpers\EmailHelper;
 
 
 
@@ -223,4 +225,44 @@ class UserController extends Controller
 
         return response()->json(['message' => $role], 200);
     }
+    public static function quickRandom($length = 16)
+    {
+        $pool = '123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';
+
+        return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
+    }
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        $newPassword=$this->quickRandom();// Generates a random 10 character password
+
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($newPassword);
+        $user->save();
+
+        try {
+            // Prepare email data
+            $emailData = [
+                'to' => $user->email,
+                'subject' => 'Your password has been reset',
+                'data' => [
+                    'name' => $user->name,
+                    'message' => 'Your new password is: <b>' . $newPassword . '</b>',
+                ],
+            ];
+        
+            // Send email notification using your custom helper
+            EmailHelper::mailSendGlobal($emailData['to'], $emailData['subject'], $emailData['data']);
+            
+        } catch (\Exception $e) {
+            // Log the exception or handle it in another way
+            \Log::error('Failed to send email: '.$e->getMessage());
+        }
+
+        return response()->json(['message' => 'Password reset and email sent successfully.']);
+    }
+
 }

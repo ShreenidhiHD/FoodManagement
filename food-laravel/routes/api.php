@@ -58,6 +58,8 @@ Route::post('/admin_password_change', [adminController::class, 'changePassword']
 Route::get('/admin/verify_user/{id}', [adminController::class, 'verify_user'])->middleware('auth:sanctum');
 Route::get('/admin/unverify_user/{id}', [adminController::class, 'unverify_user'])->middleware('auth:sanctum');
 
+
+Route::post('/reset-password', [UserController::class, 'resetPassword']);
 // Route to fetch application settings
 Route::get('/test/re', [FoodDonationsController::class, 'donation_list'])->middleware('auth:sanctum');
 Route::get('/settings', [SettingsController::class, 'getSettings']);
