@@ -8,6 +8,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\FoodDonationsController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\adminController;
+use App\Http\Controllers\BadgeController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,6 +27,7 @@ Route::post('/login', [UserController::class, 'login']);
 Route::get('/user-role', [UserController::class, 'userrole'])->middleware('auth:sanctum');
 // Route for user logout, accessible only for authenticated users
 Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+Route::get('/user/is-profile-complete', [UserController::class, 'isProfileComplete'])->middleware('auth:sanctum');
 Route::middleware('auth:sanctum')->get('/validate-token',[UserController::class, 'validateToken']);
 Route::middleware('auth:sanctum')->get('/user/profile', [UserController::class, 'getProfile']);
 Route::middleware('auth:sanctum')->put('/user/profile', [UserController::class, 'updateProfile']);
@@ -62,10 +64,10 @@ Route::get('/admin/unverify_user/{id}', [adminController::class, 'unverify_user'
 Route::post('/reset-password', [UserController::class, 'resetPassword']);
 
 //Route for badges of user dashboard
-Route::get('/my_donation', [BadgeController::class, 'my_donation_badge'])->middleware('auth:sanctum');
-Route::get('/my_purchase', [BadgeController::class, 'my_purchases_badge'])->middleware('auth:sanctum');
-Route::get('/my_request', [BadgeController::class, 'my_request_badge'])->middleware('auth:sanctum');
-Route::get('/request', [BadgeController::class, 'request_badge'])->middleware('auth:sanctum');
+Route::get('/badge/my_donation', [BadgeController::class, 'my_donation_badge'])->middleware('auth:sanctum');
+Route::get('/badge/my_purchase', [BadgeController::class, 'my_purchases_badge'])->middleware('auth:sanctum');
+Route::get('/badge/my_request', [BadgeController::class, 'my_request_badge'])->middleware('auth:sanctum');
+Route::get('/badge/request', [BadgeController::class, 'request_badge'])->middleware('auth:sanctum');
 
 //Check for admin account
 Route::get('/check_admin', [UserController::class, 'check_admin']);

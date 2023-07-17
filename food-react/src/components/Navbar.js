@@ -32,7 +32,8 @@ const ResponsiveAppBar = () => {
     { name: 'Home', path: '/UserHome' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
-    { name: 'Profile', path: '/userprofile' },
+    { name: 'Login', path: '/login' },
+    { name: 'Signup', path: '/signup' },
   ];
 
   const getUserRole = async () => {

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react'; // Don't forget to import useState!
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,8 +14,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
-
-async function loginUser(email, password, setLoginError) {
+async function loginUser(email, password, setLoginError, setErrorMessage) {
   try {
     const response = await fetch('http://localhost:8000/api/login', {
       method: 'POST',
@@ -26,10 +26,12 @@ async function loginUser(email, password, setLoginError) {
         password
       }),
     });
+    
+const data = await response.json();
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
+      throw new Error(data.error || `HTTP error! status: ${response.status}`);
+  }
+    
     const token = data.token;
     localStorage.setItem('authToken', token);
     if (response.status === 201) {
@@ -39,23 +41,39 @@ async function loginUser(email, password, setLoginError) {
     }
     
   } catch (error) {
+    let message = 'Login failed. Please try again later.';
+    if (error.response && error.response.data && error.response.data.message) {
+        message = error.response.data.message;
+    } else if (error.request) {
+        // The request was made but no response was received
+        console.log(error.request);
+        message = 'Failed: No response from server';
+    } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+        message = 'Failed: ' + error.message;
+    }
     console.error('Error during login:', error);
+    setErrorMessage(message);
     setLoginError(true);
     setTimeout(() => {
       setLoginError(false);
+      setErrorMessage(''); // clear the error message after 5 seconds
     }, 5000); // Remove error message after 5 seconds
-  }
+}
+
+
 }
 
 export default function SignInSide() {
-  const [loginError, setLoginError] = React.useState(false);
+  const [loginError, setLoginError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); // add errorMessage state here
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    loginUser(data.get('email'), data.get('password'), setLoginError);
+    loginUser(data.get('email'), data.get('password'), setLoginError, setErrorMessage);  // pass setErrorMessage here
   };
-
   return (
     <ThemeProvider theme={createTheme()}>
       <Grid container component="main" sx={{ height: '100vh' }}>
@@ -92,9 +110,10 @@ export default function SignInSide() {
             </Typography>
             {loginError && (
               <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
-                The provided credentials are incorrect.
+                  {errorMessage}
               </Alert>
-            )}
+          )}
+
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"

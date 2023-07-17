@@ -15,7 +15,7 @@ const ForgetPassword = () => {
     event.preventDefault();
     try {
       const response = await axios.post('http://localhost:8000/api/reset-password', { email });
-      if (response.data.message=='Password reset and email sent successfully.') {
+      if (response.data.message==='Password reset and email sent successfully.') {
 
         toast.success(response.data.message);
       } else {

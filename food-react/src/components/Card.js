@@ -23,6 +23,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
+import { useNavigate } from "react-router-dom";
+
 
 const RequestButton = styled(Button)`
   color: white;
@@ -33,6 +35,7 @@ const RequestButton = styled(Button)`
 `;
 
 const RecipeReviewCard = ({ item }) => {
+  const navigate = useNavigate();
   const [requested, setRequested] = useState(item.buttonStatus === 'request');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
@@ -44,14 +47,30 @@ const RecipeReviewCard = ({ item }) => {
   const [openDetails, setOpenDetails] = useState(false);
 
   const handleClickOpenDetails = () => {
-    setOpenDetails(true);
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      // Redirect to login page if user is not authenticated
+      navigate("/login");
+    } else {
+      // Continue with your previous logic
+      setOpenDetails(true);
+    }
+    
   };
 
   const handleCloseDetails = () => {
     setOpenDetails(false);
   };
   const handleRequestClick = async () => {
-    setOpenDialog(true);
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      // Redirect to login page if user is not authenticated
+      navigate("/login");
+    } else {
+      // Continue with your previous logic
+      setOpenDialog(true);
+    }
+    
   };
 
   const handleDialogClose = () => {

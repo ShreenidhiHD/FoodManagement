@@ -70,10 +70,10 @@ class UserController extends Controller
             // Check if the user exists and the password is correct
             $user = User::where('email', $request->email)->first();  
 
-            if($user->status=='deactived'){ return response()->json(['message' => 'User account is deactivated! Please contact admin.'], 401);  }
+            if($user->status=='deactived'){ return response()->json(['error' => 'User account is deactivated! Please contact admin.'], 401);  }
 
             if (!$user || !Hash::check($request->password, $user->password)) {  
-                return response()->json(['message' => 'The provided credentials are incorrect.'], 401);  
+                return response()->json(['error' => 'The provided credentials are incorrect.'], 401);  
             }  
             // Create a token for the user
             $token = $user->createToken('authToken')->plainTextToken;  
@@ -82,26 +82,27 @@ class UserController extends Controller
             return response()->json(['token' => $token], 201);  
         }   
         catch (QueryException $e) {  
-            return response()->json(['message' => $e->getMessage()], 400);  
+            return response()->json(['error' => 'An error occurred while processing your request. Please try again later.'], 400);  
         }  
         catch (PDOException $e) {  
-            // Log the database connection error
-            Log::error('Database connection error:', $e->getMessage());
-
-            return response()->json(['message' => 'Database connection failed. Please try again later.'], 503);  
+            return response()->json(['error' => 'Database connection failed. Please try again later.'], 503);  
         } 
         catch (ValidationException $e) {  
-            // Log the validation error
-            Log::error('Validation error:', $e->errors());
-
-            return response()->json(['message' => $e->errors()], 422);  
+            $errors = $e->errors();
+        
+            $errorMessages = [];
+            foreach ($errors as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorMessages[] = $field . ': ' . $message;
+                }
+            }
+            
+            return response()->json(['error' => implode(' ', $errorMessages)], 422);
         } 
         catch (\Exception $e) {  
-            // Log the exception
-            Log::error('Exception:', $e->getMessage());
-
-            return response()->json(['message' => 'Login failed. Please try again.'], 500);
+            return response()->json(['error' => 'Login failed. Please try again.'], 500);
         }
+        
     }
 
     // Logout function handles user deauthentication
@@ -292,4 +293,28 @@ class UserController extends Controller
         if($status){ return response()->json(['message' => 'Admin account added successfully'],200); }
         else{ return response()->json(['message' => 'Unable to add admin account'],200); }
     }
+
+    public function isProfileComplete()
+{
+    $user = Auth::guard('sanctum')->user();
+
+    if (!$user) {
+        return response()->json(['message' => 'User not authenticated'], 401);
+    }
+
+    if (
+        $user->name &&
+        $user->mobile &&
+        $user->email &&
+        $user->whatsapp &&
+        $user->address &&
+        $user->pincode
+    ) {
+        return response()->json(['isComplete' => true]);
+    } else {
+        return response()->json(['isComplete' => false]);
+    }
+}
+
+
 }

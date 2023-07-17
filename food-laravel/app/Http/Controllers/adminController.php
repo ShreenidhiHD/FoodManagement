@@ -408,24 +408,6 @@ class adminController extends Controller
 
     }
 
-    //Verification functions
-    // public function verify_user(Request $request,$id){
-    //     $user = Auth::guard('sanctum')->user();
-
-    //     if(!$user){
-    //         return response()->json(['message' => 'User not authenticated'], 401);
-    //     }
-
-    //     $current_status=DB::table('users')->where('id',$id)->get();
-    //     if($current_status->status=='deactived'){ return response()->json(['message' => 'User account is deactivated'], 401); }
-    //     if($current_status->status=='verified'){ return response()->json(['message' => 'User is already verified'], 401); }
-    //     if($current_status->role=='admin'){ return response()->json(['message' => 'Unable to update admin account'], 401); }
-
-    //     $status=DB::table('user')->where('id',$id)->update(['status'=>'verified']);
-    //     if($status){ return response()->json(['message' => 'Account successfully updated'], 200); }
-    //     else{  return response()->json(['message' => 'Unable to update account'], 401);  }
-    // }
-
     public function verify_user(Request $request,$id){
         $user = Auth::guard('sanctum')->user();
     
@@ -457,21 +439,6 @@ class adminController extends Controller
         }
     }
     
-
-    // public function unverify_user(Request $request,$id){
-    //     $user = Auth::guard('sanctum')->user();
-
-    //     if(!$user){
-    //         return response()->json(['message' => 'User not authenticated'], 401);
-    //     }
-
-    //     if($current_status->status=='deactived'){ return response()->json(['message' => 'User account is deactivated'], 401); }
-    //     if($current_status->role=='admin'){ return response()->json(['message' => 'Unable to update admin account'], 401); }
-
-    //     $status=DB::table('user')->where('id',$id)->update(['status'=>'active']);
-    //     if($status){ return response()->json(['message' => 'Account successfully updated'], 200); }
-    //     else{  return response()->json(['message' => 'Unable to update account'], 401);  }
-    // }
     public function unverify_user(Request $request, $id){
         $user = Auth::guard('sanctum')->user();
     
