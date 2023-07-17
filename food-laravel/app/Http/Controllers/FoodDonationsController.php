@@ -77,6 +77,7 @@ class FoodDonationsController extends Controller
             'donation' => $donation, // Optional: Include the created donation in the response
         ], 200);
     }
+
     public function userDonations(Request $request) {
         // Sanctum provides a handy way to get the authenticated user
         $user = $request->user();
@@ -126,6 +127,16 @@ class FoodDonationsController extends Controller
         }
         return $user_array;
     }
+
+    public function update_donation_status($id){
+        $status=DB::table('donations')->where('id',$id)->update(['status'=>'expired']);
+        if($status){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     
     public function donation_list(Request $request)
     {
@@ -136,6 +147,10 @@ class FoodDonationsController extends Controller
             $temp = [];
             $user = $this->get_user_details_by_userid($donation['Created_by']);
             $user_status = $user['user_status'] ?? 'default_status';
+
+            $expiry_date=date_add(date_create($donation['prepared_date']),date_interval_create_from_date_string($donation['expiry_in_days']." days"));
+            $today=date('Y-m-d');
+            if($expiry_date<date_create($today)){ $this->update_donation_status($donation['id']); }
     
             if ($user_status != 'deactived' && $donation['status'] == 'active') {
                 if (is_array($user) && count($user) > 0) {

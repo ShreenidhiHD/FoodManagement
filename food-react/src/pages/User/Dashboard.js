@@ -1,4 +1,3 @@
-import React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Badge from '@mui/material/Badge';
@@ -8,9 +7,61 @@ import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const DashboardPage = () => {
-  const notificationCounts = 3; // Default notification count
+  const [myDonationBadge, setMyDonationBadge] = useState(0);
+  const [myPurchaseBadge, setMyPurchaseBadge] = useState(0);
+  const [myRequestBadge, setMyRequestBadge] = useState(0);
+  const [requestBadge, setRequestBadge] = useState(0);
+  
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        // Handle unauthenticated state
+        return;
+      }
+      
+      const donationResponse = await axios.get('http://localhost:8000/api/badge/my_donation', {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      setMyDonationBadge(donationResponse.data.message);
+
+      const purchaseResponse = await axios.get('http://localhost:8000/api/badge/my_purchase', {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      setMyPurchaseBadge(purchaseResponse.data.message);
+
+      const requestResponse = await axios.get('http://localhost:8000/api/badge/my_request', {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      setMyRequestBadge(requestResponse.data.message);
+
+      const badgeResponse = await axios.get('http://localhost:8000/api/badge/request', {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      setRequestBadge(badgeResponse.data.message);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  
 
   return (
     <Container sx={{ marginTop: '2rem' }}>
@@ -19,7 +70,7 @@ const DashboardPage = () => {
           <Card>
             <CardContent>
               <Badge
-                badgeContent={notificationCounts}
+                 badgeContent={myDonationBadge}
                 color="secondary"
                 anchorOrigin={{
                   vertical: 'top',
@@ -51,7 +102,7 @@ const DashboardPage = () => {
           <Card>
             <CardContent>
               <Badge
-                badgeContent={notificationCounts}
+                badgeContent={myPurchaseBadge}
                 color="secondary"
                 anchorOrigin={{
                   vertical: 'top',
@@ -83,7 +134,7 @@ const DashboardPage = () => {
           <Card>
             <CardContent>
               <Badge
-                badgeContent={notificationCounts}
+                badgeContent={myRequestBadge}
                 color="secondary"
                 anchorOrigin={{
                   vertical: 'top',
@@ -115,7 +166,7 @@ const DashboardPage = () => {
           <Card>
             <CardContent>
               <Badge
-                badgeContent={notificationCounts}
+                badgeContent={requestBadge }
                 color="secondary"
                 anchorOrigin={{
                   vertical: 'top',

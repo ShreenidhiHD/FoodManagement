@@ -18,20 +18,22 @@ const ResponsiveAppBar = () => {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('authToken') !== null);
   const [userRole, setUserRole] = useState(null);
-  const restrictedRoutes = ['/login', '/signup', '/'];
+  const restrictedRoutes = ['/login', '/signup', '/','/ForgetPassword'];
   const restrictedPages = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
     { name: 'Login', path: '/login' },
     { name: 'Signup', path: '/signup' },
+   
   ];
 
   const unrestrictedPages = [
     { name: 'Home', path: '/UserHome' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
-    { name: 'Profile', path: '/userprofile' },
+    { name: 'Login', path: '/login' },
+    { name: 'Signup', path: '/signup' },
   ];
 
   const getUserRole = async () => {

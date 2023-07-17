@@ -6,7 +6,7 @@ import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 
-const AdminUsers = () => {
+const AdminVerifyUsers = () => {
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
@@ -14,7 +14,7 @@ const AdminUsers = () => {
     fetchData();
   }, []);
 
-  const handleDeactivateClick = async (item) => {
+  const handleRemoveVerificationClick = async (item) => {
     try {
       const authToken = localStorage.getItem('authToken');
       if (!authToken) {
@@ -22,7 +22,7 @@ const AdminUsers = () => {
         return;
       }
       
-      const response = await axios.get(`http://localhost:8000/api/user-deactivate/${item.id}`, {
+      const response = await axios.get(`http://localhost:8000/api/admin/unverify_user/${item.id}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -30,29 +30,30 @@ const AdminUsers = () => {
 
       console.log(response.data); // Check the response data
 
-      if (response.data.message === "User account updated successfully") {
+      if (response.data.message === "Account successfully updated") {
         fetchData().then(() => {
-          toast.success(`Deactivation done Successfully`);
-        })
+            toast.success(`Unverifed Successfully`);
+          })
+      
       } else {
-        toast.error(response.data.message || 'failed to Deactivate');
+        toast.error(response.data.message || 'failed');
       }
     } catch (error) {
-      if (error.response) {
-        toast.error('Failed to deactivate: ' + error.response.data.message);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.log(error.request);
-        toast.error('Failed to deactivate: No response from server');
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log('Error', error.message);
-        toast.error('Failed to deactivate: ' + error.message);
-      }
+        if (error.response) {
+            toast.error('Failed: ' + error.response.data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            console.log(error.request);
+            toast.error('Failed: No response from server');
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error', error.message);
+            toast.error('Failed: ' + error.message);
+          }
     }
   };
 
-  const handleActivateClick = async (item) => {
+  const handleVerifyClick = async (item) => {
     try {
       const authToken = localStorage.getItem('authToken');
       if (!authToken) {
@@ -60,7 +61,7 @@ const AdminUsers = () => {
         return;
       }
 
-      const response = await axios.get(`http://localhost:8000/api/user-activate/${item.id}`, {
+      const response = await axios.get(`http://localhost:8000/api/admin/verify_user/${item.id}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -68,25 +69,26 @@ const AdminUsers = () => {
 
       console.log(response.data); // Check the response data
 
-      if (response.data.message === "User account updated successfully") {
+      if (response.data.message === "Account successfully updated") {
         fetchData().then(() => {
-          toast.success(`Activated done Successfully`);
-        })
+            toast.success(`Verifed Successfully`);
+          })
+      
       } else {
-        toast.error(response.data.message || 'Acivation failed');
+        toast.error(response.data.message || ' failed');
       }
     } catch (error) {
-      if (error.response) {
-        toast.error('Failed to deactivate: ' + error.response.data.message);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.log(error.request);
-        toast.error('Failed to deactivate: No response from server');
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log('Error', error.message);
-        toast.error('Failed to deactivate: ' + error.message);
-      }
+        if (error.response) {
+            toast.error('Failed: ' + error.response.data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            console.log(error.request);
+            toast.error('Failed: No response from server');
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error', error.message);
+            toast.error('Failed: ' + error.message);
+          }
     }
   };
 
@@ -112,18 +114,18 @@ const AdminUsers = () => {
     }
   };
   const actionButton = (row) => {
-    if (row.status === 'Active' || row.status === 'Verified'){
-      return <Button variant="contained" size="small" component={Link}   onClick={() => handleDeactivateClick(row)}>
-        Deactive
+    if (row.status === 'Verified'){
+      return <Button variant="contained" size="small" component={Link}   onClick={() => handleRemoveVerificationClick(row)}>
+        Remove Verification
       </Button>
     }
     else{
-      return <Button variant="contained" size="small" component={Link}  onClick={() => handleActivateClick(row)}>
-        Active
+      return <Button variant="contained" size="small" component={Link}  onClick={() => handleVerifyClick(row)}>
+        Verify
       </Button>
     }
   };
-  
+
 
   return (
     <Container sx={{ marginTop: '2rem' }}>
@@ -138,4 +140,4 @@ const AdminUsers = () => {
   );
 };
 
-export default AdminUsers;
+export default AdminVerifyUsers;

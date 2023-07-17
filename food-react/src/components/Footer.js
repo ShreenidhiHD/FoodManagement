@@ -9,16 +9,13 @@ function Footer() {
             <h5 className="text-white">Section</h5>
             <ul className="nav flex-column">
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-white">Home</a>
+                <a href="/Home" className="nav-link p-0 text-white">Home</a>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-white">About Us</a>
+                <a href="/about" className="nav-link p-0 text-white">About Us</a>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-white">Categories</a>
-              </li>
-              <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-white">Contact Us</a>
+                <a href="/contact" className="nav-link p-0 text-white">Contact Us</a>
               </li>
             </ul>
           </div>
@@ -39,15 +36,7 @@ function Footer() {
           </div>
 
           <div className="col-4 offset-4">
-            <form>
-              <h5 className="text-white">Subscribe to our newsletter</h5>
-              <p className="text-white">Monthly digest of what's new and exciting from us.</p>
-              <div className="d-flex w-100 gap-2">
-                <label htmlFor="newsletter1" className="visually-hidden">Email address</label>
-                <input id="newsletter1" type="text" className="form-control" placeholder="Email address" />
-                <button className="btn btn-primary" type="button">Subscribe</button>
-              </div>
-            </form>
+            
           </div>
         </div>
 

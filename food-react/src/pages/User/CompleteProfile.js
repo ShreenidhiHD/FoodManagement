@@ -5,8 +5,12 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../css/Home.css';
 import { Alert } from '@mui/material';
-import ChangePassword from '../../components/ChangePassword';
-const Profile = () => {
+import { useNavigate } from 'react-router-dom';
+
+
+
+const CompleteProfile = () => {
+    const navigate = useNavigate();
     const [pincodeError, setPincodeError] = useState('');
     const settings = useContext(SettingsContext);
     const [emailError, setEmailError] = useState('');
@@ -82,7 +86,9 @@ const Profile = () => {
           setTimeout(() => {
             setMessage('');
             setMessageType('');
+            navigate('/UserHome'); 
           }, 3000);
+
         })
         .catch((error) => {
          setMessage('Failed to update profile');
@@ -113,7 +119,7 @@ const Profile = () => {
 
       <Card sx={{ width: '100%', padding: '2rem' }}>
       <CardContent>
-        <h2 class="text-center mb-4">Profile</h2>
+        <h2 class="text-center mb-4">Complete Profile</h2>
         <form onSubmit={submitForm} autoComplete="off">
           <Grid container spacing={2}>
             <Grid item xs={12} sm={4}>
@@ -214,10 +220,9 @@ const Profile = () => {
         </form>
         </CardContent>
         </Card>
-        <ChangePassword />
       </Container>
     </div>
   );
 };
 
-export default Profile;
+export default CompleteProfile;
