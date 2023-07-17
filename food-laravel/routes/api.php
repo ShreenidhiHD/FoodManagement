@@ -60,6 +60,17 @@ Route::get('/admin/unverify_user/{id}', [adminController::class, 'unverify_user'
 
 
 Route::post('/reset-password', [UserController::class, 'resetPassword']);
+
+//Route for badges of user dashboard
+Route::get('/my_donation', [BadgeController::class, 'my_donation_badge'])->middleware('auth:sanctum');
+Route::get('/my_purchase', [BadgeController::class, 'my_purchases_badge'])->middleware('auth:sanctum');
+Route::get('/my_request', [BadgeController::class, 'my_request_badge'])->middleware('auth:sanctum');
+Route::get('/request', [BadgeController::class, 'request_badge'])->middleware('auth:sanctum');
+
+//Check for admin account
+Route::get('/check_admin', [UserController::class, 'check_admin']);
+Route::get('/create_admin', [UserController::class, 'create_admin']);
+
 // Route to fetch application settings
 Route::get('/test/re', [FoodDonationsController::class, 'donation_list'])->middleware('auth:sanctum');
 Route::get('/settings', [SettingsController::class, 'getSettings']);

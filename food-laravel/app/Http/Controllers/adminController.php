@@ -195,7 +195,7 @@ class adminController extends Controller
         }
 
         if($total_rows==$total_successful_updation){
-            $status=DB::table('users')->where(['id'=>$id,'status'=>'active'])->update(['status'=>'deactived']);
+            $status=DB::table('users')->where(['id'=>$id,'status'=>'active'])->orWhere(['id'=>$id,'status'=>'verified'])->update(['status'=>'deactived']);
             if($status){ return response()->json(['message' => 'User account updated successfully'], 200); }
             else{ return response()->json(['message' => 'Unable to update user! some of users donations and purchases might have affected'], 401); }
         }

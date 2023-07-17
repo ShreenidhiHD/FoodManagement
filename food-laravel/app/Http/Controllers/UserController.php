@@ -70,6 +70,8 @@ class UserController extends Controller
             // Check if the user exists and the password is correct
             $user = User::where('email', $request->email)->first();  
 
+            if($user->status=='deactived'){ return response()->json(['message' => 'User account is deactivated! Please contact admin.'], 401);  }
+
             if (!$user || !Hash::check($request->password, $user->password)) {  
                 return response()->json(['message' => 'The provided credentials are incorrect.'], 401);  
             }  
@@ -264,5 +266,30 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Password reset and email sent successfully.']);
     }
+    
+    public function check_admin(){
+        $admin_check=DB::table('users')->where('role','admin')->get();
 
+        if(count($admin_check)>0){
+            return response()->json(['message' => 'true'],200);
+        }
+        else{
+            return response()->json(['message' => 'false'],401);
+        }
+    }
+
+    public function create_admin(Request $request){
+        $validate = $request->validate([
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8',
+        ]);
+
+        $validate['password']=Hash::make($request->password);
+        $validate['role']='admin';
+
+        $status=DB::table('users')->insert($validate);
+
+        if($status){ return response()->json(['message' => 'Admin account added successfully'],200); }
+        else{ return response()->json(['message' => 'Unable to add admin account'],200); }
+    }
 }
