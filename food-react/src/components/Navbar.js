@@ -18,22 +18,20 @@ const ResponsiveAppBar = () => {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('authToken') !== null);
   const [userRole, setUserRole] = useState(null);
-  const restrictedRoutes = ['/login', '/signup', '/','/ForgetPassword'];
+  const restrictedRoutes = ['/login', '/signup', '/'];
   const restrictedPages = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
     { name: 'Login', path: '/login' },
     { name: 'Signup', path: '/signup' },
-   
   ];
 
   const unrestrictedPages = [
     { name: 'Home', path: '/UserHome' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
-    { name: 'Login', path: '/login' },
-    { name: 'Signup', path: '/signup' },
+   
   ];
 
   const getUserRole = async () => {
@@ -101,7 +99,9 @@ const ResponsiveAppBar = () => {
             {settings?.appName}
           </Typography>
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            {restrictedRoutes.includes(location.pathname) ? renderPages(restrictedPages) : renderPages(unrestrictedPages)}
+          {isLoggedIn ? renderPages(unrestrictedPages) : renderPages(restrictedPages)}
+
+            {/* {restrictedRoutes.includes(location.pathname) ? renderPages(restrictedPages) : renderPages(unrestrictedPages)} */}
           </Box>
           {isLoggedIn && !restrictedRoutes.includes(location.pathname) && (
         <>
