@@ -26,7 +26,7 @@ const CompleteProfile = () => {
     const [mobileError, setMobileError] = useState('');
     const [whatsappError, setWhatsappError] = useState('');
     useEffect(() => {
-        
+      console.log(navigate);
       const fetchProfile = async () => {
         try {
           const authToken = localStorage.getItem('authToken');
@@ -86,7 +86,10 @@ const CompleteProfile = () => {
           setTimeout(() => {
             setMessage('');
             setMessageType('');
-            navigate('/UserHome'); 
+           
+            window.location.href = '/UserHome';
+            
+           
           }, 3000);
 
         })

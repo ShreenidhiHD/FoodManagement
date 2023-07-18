@@ -15,10 +15,32 @@ const DashboardPage = () => {
   const [myPurchaseBadge, setMyPurchaseBadge] = useState(0);
   const [myRequestBadge, setMyRequestBadge] = useState(0);
   const [requestBadge, setRequestBadge] = useState(0);
-  
+  const [userRole, setUserRole] = useState('');
   useEffect(() => {
     fetchData();
+    getUserRole();
   }, []);
+  const getUserRole = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/user-role`, { 
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setUserRole(data.message); // assuming response is an object containing a 'role' property
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -66,6 +88,7 @@ const DashboardPage = () => {
   return (
     <Container sx={{ marginTop: '2rem' }}>
       <Grid container spacing={3} alignItems="center">
+      {userRole === 'charity' && (
         <Grid item xs={12} sm={4}>
           <Card>
             <CardContent>
@@ -97,7 +120,7 @@ const DashboardPage = () => {
             </CardContent>
           </Card>
         </Grid>
-
+)}
         <Grid item xs={12} sm={4}>
           <Card>
             <CardContent>
@@ -161,7 +184,7 @@ const DashboardPage = () => {
             </CardContent>
           </Card>
         </Grid>
-        
+        {userRole === 'charity' && (
         <Grid item xs={12} sm={4}>
           <Card>
             <CardContent>
@@ -193,6 +216,7 @@ const DashboardPage = () => {
             </CardContent>
           </Card>
         </Grid>
+          )}
       </Grid>
     </Container>
   );
