@@ -14,6 +14,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
+import { useLocation } from 'react-router-dom';
 async function loginUser(email, password, setLoginError, setErrorMessage) {
   try {
     const response = await fetch('http://localhost:8000/api/login', {
@@ -27,17 +28,24 @@ async function loginUser(email, password, setLoginError, setErrorMessage) {
       }),
     });
     
-const data = await response.json();
+    const data = await response.json();
     if (!response.ok) {
       throw new Error(data.error || `HTTP error! status: ${response.status}`);
-  }
+    }
     
-    const token = data.token;
+    const { token, role } = data;
     localStorage.setItem('authToken', token);
+    localStorage.setItem('userRole', role); // save the user role in local storage
+
     if (response.status === 201) {
       console.log(`User logged in`);
-      // Redirect to userhome.js
-      window.location.href = 'UserHome';
+
+      // Redirect based on role
+      if(role === 'admin'){
+        window.location.href = '/AdminDashboard'; 
+      } else {
+        window.location.href = '/UserHome';
+      }
     }
     
   } catch (error) {
@@ -68,7 +76,9 @@ const data = await response.json();
 export default function SignInSide() {
   const [loginError, setLoginError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(''); // add errorMessage state here
-
+  const location = useLocation();
+ 
+  const roles = location.state ? location.state.roles : 'user';
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -106,7 +116,7 @@ export default function SignInSide() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Log in
+              {`${roles.charAt(0).toUpperCase() + roles.slice(1)} Login`} 
             </Typography>
             {loginError && (
               <Alert severity="error" sx={{ mt: 2, width: '100%' }}>

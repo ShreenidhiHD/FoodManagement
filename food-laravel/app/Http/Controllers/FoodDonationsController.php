@@ -30,7 +30,7 @@ class FoodDonationsController extends Controller
             'number_of_plates' => 'required|integer',
             'location' => 'required|string',
             'delivery_status' => 'required|string',
-            'price' => 'required|numeric',
+           
             'expiry_in_days' => 'required|integer',
             'food_type' => 'required|string',
             'event_name' => 'required|string',
@@ -162,7 +162,7 @@ class FoodDonationsController extends Controller
                 $temp['number_of_plates'] = $donation['number_of_plates'];
                 $temp['location'] = ucfirst($donation['location']);
                 $temp['delivery_status'] = ucfirst($donation['delivery_status']);
-                $temp['price'] = number_format($donation['price'], 2);
+              
                 $temp['expiry_in_days'] = $donation['expiry_in_days'] . " Days";
                 $temp['food_type'] = ucfirst($donation['food_type']);
                 $temp['event_name'] = ucfirst($donation['event_name']);
@@ -245,7 +245,7 @@ class FoodDonationsController extends Controller
             'number_of_plates' => 'required|integer',
             'location' => 'required|string',
             'delivery_status' => 'required|string',
-            'price' => 'required|numeric',
+           
             'expiry_in_days' => 'required|integer',
             'food_type' => 'required|string',
             'event_name' => 'required|string',

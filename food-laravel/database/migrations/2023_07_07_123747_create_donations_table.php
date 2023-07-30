@@ -18,7 +18,6 @@ class CreateDonationsTable extends Migration
             $table->integer('number_of_plates');
             $table->string('location');
             $table->string('delivery_status');
-            $table->decimal('price', 8, 2);
             $table->integer('expiry_in_days');
             $table->enum('food_type', ['veg', 'non_veg', 'both']);
             $table->string('event_name');

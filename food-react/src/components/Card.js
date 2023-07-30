@@ -301,11 +301,7 @@ const RecipeReviewCard = ({ item }) => {
               <b>Delivery Status:</b> {item.delivery_status}
             </Typography>
           </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body2" color="text.secondary">
-              <b>Price:</b> {item.price}
-            </Typography>
-          </Grid>
+         
           <Grid item xs={6}>
             <Typography variant="body2" color="text.secondary">
               <b>Expiry in days:</b> {item.expiry_in_days}

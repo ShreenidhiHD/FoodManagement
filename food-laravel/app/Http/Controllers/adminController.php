@@ -65,7 +65,7 @@ class adminController extends Controller
             ['field' => 'id', 'headerName' => 'ID'],
             ['field' => 'number_of_plates', 'headerName' => 'Number of Plates'],
             ['field' => 'delivery_status', 'headerName' => 'Delivery Status'],
-            ['field' => 'price', 'headerName' => 'Price'],
+          
             ['field' => 'expiry_in_days', 'headerName' => 'Expiry in Days'],
             ['field' => 'food_type', 'headerName' => 'Food Type'],
             ['field' => 'event_name', 'headerName' => 'Event Name'],
@@ -93,7 +93,7 @@ class adminController extends Controller
                 'id' => $donation->id,
                 'number_of_plates' => $donation->number_of_plates,
                 'delivery_status' => ucfirst($donation->delivery_status),
-                'price' => $donation->price,
+               
                 'expiry_in_days' => $donation->expiry_in_days,
                 'prepared_date' => date_format(date_create($donation->prepared_date),'d-m-Y h:m:s a'),
                 'status' => ucfirst($donation->status),

@@ -100,6 +100,18 @@ const Profile = () => {
   if (!settings) {
     return <div>Loading...</div>;
   }
+  const handleMobileChange = (event) => {
+    const inputMobile = event.target.value;
+    const pattern = /^\d{0,10}$/; // Regular expression to allow up to 10 digits
+
+    if (!pattern.test(inputMobile)) {
+      setMobileError('Mobile number should be exactly 10 digits');
+      setMobile(inputMobile.slice(0, 10)); // Truncate the input to 10 characters
+    } else {
+      setMobileError('');
+      setMobile(inputMobile);
+    }
+  };
 
   return (
     <div>
@@ -120,24 +132,16 @@ const Profile = () => {
               <TextField label="Name" variant="outlined" value={name} onChange={(event) => handleInputChange(event, setName)} fullWidth required />
             </Grid>
             <Grid item xs={12} sm={4}>
-       <TextField 
-                label="Mobile" 
-                variant="outlined" 
-                value={mobile} 
-                onChange={(event) => {
-                  const pattern = new RegExp("^\\d{10}$");
-                  if (!pattern.test(event.target.value)) {
-                    setMobileError("Mobile number should be exactly 10 digits");
-                  } else {
-                    setMobileError("");
-                  }
-                  handleInputChange(event, setMobile);
-                }} 
-                fullWidth 
-                required 
-                error={mobileError !== ''}
-                helperText={mobileError}
-              />
+            <TextField
+      label="Mobile"
+      variant="outlined"
+      value={mobile}
+      onChange={handleMobileChange}
+      fullWidth
+      required
+      error={mobileError !== ''}
+      helperText={mobileError}
+    />
             </Grid>
             <Grid item xs={12} sm={4}>
             <TextField 

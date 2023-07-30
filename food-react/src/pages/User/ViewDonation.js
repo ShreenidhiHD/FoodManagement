@@ -14,7 +14,7 @@ function ViewDonation() {
   const [numberOfPlates, setNumberOfPlates] = useState('');
   const [location, setLocation] = useState('');
   const [deliveryStatus, setDeliveryStatus] = useState('');
-  const [price, setPrice] = useState('');
+ 
   const [expiryInDays, setExpiryInDays] = useState('');
   const [foodType, setFoodType] = useState('veg');
   const [eventName, setEventName] = useState('');
@@ -50,7 +50,7 @@ function ViewDonation() {
             setNumberOfPlates(donation.number_of_plates);
             setLocation(donation.location);
             setDeliveryStatus(donation.delivery_status);
-            setPrice(donation.price);
+           
             setExpiryInDays(donation.expiry_in_days);
             setFoodType(donation.food_type);
             setEventName(donation.event_name);
@@ -100,7 +100,7 @@ function ViewDonation() {
       number_of_plates: parseInt(numberOfPlates),
       location,
       delivery_status: deliveryStatus,
-      price,
+   
       expiry_in_days: expiryInDays,
       food_type: foodType,
       event_name: eventName,
@@ -169,9 +169,7 @@ function ViewDonation() {
                 <Grid item xs={12} sm={4}>
                 <TextField fullWidth label="Delivery Status" name="deliveryStatus" variant="outlined" value={deliveryStatus} onChange={(e) => setDeliveryStatus(e.target.value)} required />
                 </Grid>
-                <Grid item xs={12} sm={4}>
-                <TextField fullWidth label="Price" name="price" type="number" variant="outlined" value={price} onChange={(e) => setPrice(e.target.value)} required />
-                </Grid>
+               
                 <Grid item xs={12} sm={4}>
                 <TextField fullWidth label="Expiry in Days" name="expiryInDays" type="number" variant="outlined" value={expiryInDays} onChange={(e) => setExpiryInDays(e.target.value)} required />
                 </Grid>

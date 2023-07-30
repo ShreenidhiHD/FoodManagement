@@ -10,7 +10,7 @@ class Donation extends Model
         'number_of_plates',
         'location',
         'delivery_status',
-        'price',
+        
         'expiry_in_days',
         'food_type',
         'event_name',

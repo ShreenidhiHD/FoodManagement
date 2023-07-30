@@ -27,6 +27,7 @@ import AdminVerifyUsers from './pages/Admin/AdminVerifyUsers';
 import AdminCharity from './pages/Admin/AdminCharity';
 import ForgetPassword from './pages/ForgetPassword';
 import CompleteProfile from './pages/User/CompleteProfile';
+import LoginRole from './pages/LoginRole';
 // The App component wraps the entire application and sets up routing for all pages.
 // It also provides settings to all components using the SettingsProvider.
 function App() {
@@ -41,6 +42,7 @@ function App() {
             <Route path="/categories" element={<Categories />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/loginrole" element={<LoginRole />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgetpassword" element={<ForgetPassword />} />
             <Route path="/userhome" element={<AuthenticatedRoute><UserHome /></AuthenticatedRoute>} />

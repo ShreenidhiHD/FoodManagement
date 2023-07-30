@@ -19,20 +19,33 @@ const ResponsiveAppBar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('authToken') !== null);
   const [userRole, setUserRole] = useState(null);
   const restrictedRoutes = ['/login', '/signup', '/'];
-  const restrictedPages = [
+
+  const generalPages = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
-   
-    { name: 'Login', path: '/login' },
+  ];
+
+  const restrictedPages = [
+    ...generalPages,
+    { name: 'Login', path: '/LoginRole' },
     { name: 'Signup', path: '/signup' },
   ];
 
-  const unrestrictedPages = [
-    { name: 'Home', path: '/UserHome' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+  const userPages = [
+    ...generalPages,
     { name: 'Profile', path: '/UserProfile' },
+  ];
+
+  const adminPages = [
+    
+  ];
+
+  const charityPages = [
+    ...generalPages,
+    { name: 'Profile', path: '/UserProfile' },
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Donate', path: '/donate' },
   ];
 
   const getUserRole = async () => {
@@ -62,6 +75,7 @@ const ResponsiveAppBar = () => {
       getUserRole();
     }
   }, [isLoggedIn]);
+
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
@@ -77,41 +91,55 @@ const ResponsiveAppBar = () => {
         {page.name}
       </Button>
     ));
-  }
+  };
 
   return (
     <AppBar position="sticky" sx={{ backgroundColor: '#f8f8f8', color: '#333' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component={RouterLink}
-            to={isLoggedIn ? "/UserHome" : "/"}
-            sx={{
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            {settings?.appName}
-          </Typography>
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          {isLoggedIn ? renderPages(unrestrictedPages) : renderPages(restrictedPages)}
+        <Typography
+  variant="h6"
+  noWrap
+  component={RouterLink}
+  to={
+    isLoggedIn 
+      ? userRole === 'admin' 
+        ? "/AdminDashboard" 
+        : "/UserHome" 
+      : "/"
+  }
+  sx={{
+    flexGrow: 1,
+    fontFamily: 'monospace',
+    fontWeight: 700,
+    letterSpacing: '.3rem',
+    color: 'inherit',
+    textDecoration: 'none',
+  }}
+>
+  {settings?.appName}
+</Typography>
 
-            {/* {restrictedRoutes.includes(location.pathname) ? renderPages(restrictedPages) : renderPages(unrestrictedPages)} */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            {!isLoggedIn ? renderPages(restrictedPages) :
+             userRole === 'admin' ? renderPages(adminPages) :
+             userRole === 'user' ? renderPages(userPages) :
+             userRole === 'charity' ? renderPages(charityPages) :
+             null}
           </Box>
-          {isLoggedIn && !restrictedRoutes.includes(location.pathname) && (
-        <>
-          {userRole === 'admin' && <AdminButton/>} 
-          <DashboardButton/>
-          {userRole !== 'charity' && <DonateButton/>}
-          <Logout onLogout={handleLogout} />
-        </>
-      )}
+          {isLoggedIn && userRole !== 'admin' && !restrictedRoutes.includes(location.pathname) && (
+            <>
+              <DashboardButton/>
+              {userRole !== 'charity' && <DonateButton/>}
+              <Logout onLogout={handleLogout} />
+            </>
+          )}
+          {isLoggedIn && userRole === 'admin' && !restrictedRoutes.includes(location.pathname) && (
+            <>
+              <AdminButton/>
+              <Logout onLogout={handleLogout} />
+            </>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

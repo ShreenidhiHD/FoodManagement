@@ -79,7 +79,7 @@ class UserController extends Controller
             $token = $user->createToken('authToken')->plainTextToken;  
 
             // Return the token to the client
-            return response()->json(['token' => $token], 201);  
+            return response()->json(['token' => $token, 'role' => $user->role], 201); 
         }   
         catch (QueryException $e) {  
             return response()->json(['error' => 'An error occurred while processing your request. Please try again later.'], 400);  
